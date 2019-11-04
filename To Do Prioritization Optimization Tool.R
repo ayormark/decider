@@ -238,8 +238,9 @@ if (shiny == TRUE) {
 # eisenlikert Rating
 
 # Tell user how many tasks they are about to rate
-user <- me$content$data$name
-first_name <- strsplit(user, " ")[[1]][1]
+asana_user_info <- asn_users_me()
+asana_first_last <- asana_user_info$content$data$name
+first_name <- strsplit(asana_first_last, " ")[[1]][1]
 cat(green(paste0("Welcome, ", first_name, "\n")))
 
 cat(green("You have", todo %>% nrow(), "tasks to rate", "\n\n"), sep = "")
