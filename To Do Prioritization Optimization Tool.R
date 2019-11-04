@@ -64,8 +64,7 @@ if (input_type == "csv") {
 
 # If testing, select how many tasks to rank
 # rm(testing_task_num)
-testing_task_num <- 10
-
+testing_task_num <- 4
 
 # Run shiny app?
 shiny = FALSE
@@ -74,6 +73,7 @@ shiny = FALSE
 
 if (input_type == "csv") {
   
+  # Change csv_folder and csv_filename_base in the Parameters section
   num_csv_files <-list.files(csv_folder, 
                              pattern = csv_filename_base) %>% length()
   
@@ -84,14 +84,13 @@ if (input_type == "csv") {
     
   } else if (num_csv_files > 1) {
     
-    
     # search Downloads folder for all csv files that match the 
     # naming convention set by the Asana2go extension
     files <- file.info(list.files(csv_folder, 
                                   pattern = paste0(csv_filename_base," \\(")))
     
     # Add rownames as a column
-    csv_list <- rownames(files) %>% as_tibble
+    csv_list <- rownames_to_column(files) %>% select(rowname)
     
     # Extract version number of csv. This is dependent on 
     # all older versions remaining in folder, or removing all newer versions 
@@ -243,7 +242,12 @@ asana_first_last <- asana_user_info$content$data$name
 first_name <- strsplit(asana_first_last, " ")[[1]][1]
 cat(green(paste0("Welcome, ", first_name, "\n")))
 
-cat(green("You have", todo %>% nrow(), "tasks to rate", "\n\n"), sep = "")
+cat(green("You have", todo %>% nrow(), "tasks to rate", "\n"), sep = "")
+
+if (exists("testing_task_num")) { 
+  cat(red("Note: testing with", testing_task_num, "Tasks\n"))
+}
+
 wait_for_key("c")
 
 # Create empty dataframe with 4 columns
