@@ -47,12 +47,21 @@ library(jsonlite)
 library(qdapRegex)
 library(asana) # Development build, remotes::install_github("datacamp/asana")
 library(lubridate)
+library(here)
 # library(RCurl)
 # library(rvest)
 # library(rebus) 
 
+# Handy function to open working directory for testing
+opendir <- function(directory = getwd()){
+  system(sprintf('open %s', shQuote(directory)))
+}
+
 
 ######### Parameters ##########################################################
+
+
+setwd("~/Google Drive/Personal/R/decider/")
 
 # Choose whether to import csv or connect with Asana API
 input_type <- "asana"
@@ -146,6 +155,15 @@ if (input_type == "csv") {
   # asn_tasks_find_by_id("955209932596796")
   
   todo <- todo %>% rename(Task = name)
+  
+  # Get the expected path of the list of already-rated tasks
+  prerated_todo_csv_path <- paste0(here(), "/todo.csv")
+  
+  # Merge in past ratings of tasks to avoid re-rating
+  if (file.exists(prerated_todo_csv_path)) {
+    prerated_todo <- read_csv(prerated_todo_csv_path) %>% 
+      mutate(gid = as.character(gid))
+  }
 }
 
 ######### Functions ###########################################################
@@ -250,11 +268,14 @@ if (exists("testing_task_num")) {
 
 wait_for_key("c")
 
-# Create empty dataframe with 4 columns
-ratings <- data.frame(matrix(nrow = 0, ncol = 3))
 
+# Choose column names
+ratings_columns <- c("Task", "Urgency", "Importance", "Date_Recorded")
+
+# Create empty dataframe with same number of columns
+ratings <- data.frame(matrix(nrow = 0, ncol = ratings_columns %>% length()))
 # Name the columns
-colnames(ratings) <- c("Task", "Urgency", "Importance")
+colnames(ratings) <- ratings_columns
 
 # When testing, you may select a subset of tasks to reduce testing time
 if (exists("testing_task_num")) { todo <- todo %>% sample_n(testing_task_num) }
@@ -262,6 +283,11 @@ if (exists("testing_task_num")) { todo <- todo %>% sample_n(testing_task_num) }
 # Run the eisenlikert function on each task and add ratings to the dataframe
 for (task in todo$Task) {
   
+  # if (!(task %in% prerated_todo$Task)) {
+  #   
+  #   
+  # }
+    
   # Ask for ratings and store input
   rating <- eisenlikert(task)
   
@@ -271,7 +297,11 @@ for (task in todo$Task) {
   
   # Combine into one dataframe
   task_scores <- bind_cols(task, rating)
- 
+  
+  # Record Current Date
+  task_scores <- task_scores %>% mutate(Date_Recorded = now())
+  
+  
   # Combine input from this loop into full rating list
   ratings <- bind_rows(ratings, task_scores) %>% as.tbl()
   
@@ -282,8 +312,14 @@ todo <- full_join(ratings, todo, by = "Task")
 
 todo <- todo %>% mutate(Composite = 4 * Urgency * Importance)
 
+todo <- todo %>% arrange(-as.numeric(Date_Recorded))
+
 cat(green("You have completed ranking Urgency and Importance \n\n"), sep = "")
 wait_for_key("c")
+
+if (!file.exists(prerated_todo_csv_path)) {
+  write_csv(todo, prerated_todo_csv_path)
+}
 
 ######### EUEI Abbreviation and strings #######################################
 
@@ -385,18 +421,22 @@ for (abbrev in names(do_order)) {
       # rearrange order by quickSort results
       arrange(by = set_order)
     
-    cat(green("You have completed ordering ", 
-              set$Urgency_str[[1]], " & ", set$Importance_str[[1]],
-              " (", set$Composite[[1]], ")" ," tasks",
-              "\n\n", sep = ""))
-    wait_for_key("c") 
+    if (nrow(set) > 1) {
+      # Only state that ordering is completed if more than 1 task in process
+      cat(green("You have ordered all ", 
+                set$Urgency_str[[1]], " & ", set$Importance_str[[1]],
+                " (", set$Composite[[1]], ")" ," tasks!",
+                "\n\n", sep = ""))
+      
+      wait_for_key("c") 
+    }
     
     
     for (task in set$Task) {
       
       # Display suggested action based on EUEI, e.g. "Delegate if Possible"
       if (do_order[[abbrev]][[2]] == "Schedule") {
-        cat(red("Do not do yet, just schedule"))
+        cat(red("Do not do yet, just schedule:\n"))
       } else {
         cat(green(do_order[[abbrev]][[2]]), "\n")
       }
