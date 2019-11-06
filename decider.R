@@ -172,37 +172,11 @@ if (input_type == "csv") {
 
 ######### Functions ###########################################################
 
-# This function asks the user to rank Urgency and Importance from 1-5
+# The eisenlikert() function asks user to rank Urgency and Importance from 1-5
 # 5 is the most Urgent or most Important
 # Output is a tibble with two elements, Urgency and Importance, as integers
-eisenlikert <- function(task) { 
-  
-  # Get Input on task urgency
-  u <- readline(prompt = cat(white("---> ", unlist(task), " <---"), green("\n",  
-                                                                          "5 = Extremely Urgent\n",
-                                                                          "4 = Very Urgent\n",
-                                                                          "3 = Moderately Urgent\n",
-                                                                          "2 = Somewhat Urgent\n",
-                                                                          "1 = Not Very Urgent\n", 
-                                                                          sep = ""))) %>% 
-    as.numeric %>% round %>% as.integer %>% 
-    as_tibble %>% rename(Urgency = value)
-  
-  # Get Input on task importance
-  i <- readline(prompt = cat(white("---> ", unlist(task), " <---"), green("\n",
-                                                                          "5 = Extremely Important\n",
-                                                                          "4 = Very Important\n",
-                                                                          "3 = Moderately Important\n",
-                                                                          "2 = Somewhat Important\n",
-                                                                          "1 = Not Very Important\n", 
-                                                                          sep = ""))) %>% 
-    as.numeric %>% round %>% as.integer %>% 
-    as_tibble %>% rename(Importance = value)
-  
-  return(bind_cols(u, i))
-}
 
-# eisenlikert(task)
+source(paste0(getwd(), "/eiskenlikert.R"))
 
 
 # A function to choose which of two options is more important
