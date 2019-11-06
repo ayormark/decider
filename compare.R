@@ -1,26 +1,26 @@
 ######### Info ################################################################
 # Adam Yormark
-# Todo Prioritization Optimization Tool
+# Decider
 
 # The purpose of this script is to dramatically reduce the amount of time and 
-  # mental effort it takes to decide which tasks to do and in what order
+# mental effort it takes to decide which tasks to do and in what order
 # This script is designed to work with Asana, but can be modified 
-  # to work with any csv or list of tasks
+# to work with any csv or list of tasks
 
 # This script accomplishes this goal by combining together these concepts:
-  # The Eisenhower Matrix
-    # https://www.eisenhower.me/eisenhower-matrix/
-  # Likert Scale
-    # https://www.simplypsychology.org/likert-scale.html
-  # Quick Sort
-    # https://www.youtube.com/watch?v=WaNLJf8xzC4
+# The Eisenhower Matrix
+# https://www.eisenhower.me/eisenhower-matrix/
+# Likert Scale
+# https://www.simplypsychology.org/likert-scale.html
+# Quick Sort
+# https://www.youtube.com/watch?v=WaNLJf8xzC4
 
 # After importing the to do list, each task is then rated from 1-5 on both 
-  # Urgency and Importance. These make up 25 "buckets"
+# Urgency and Importance. These make up 25 "buckets"
 # After Analysis the order of completion for buckets has been determined to be:
-  # "EUEI" "EUVI" "VUEI" "EUMI" "VUVI" "EUSI" "MUEI" "VUMI" "SUEI" "EUNI" 
-  # "MUVI" "VUSI" "SUVI" "MUMI""NUEI" "VUNI" "SUMI" "MUSI" "NUVI" "MUNI" 
-  # "NUMI" "SUSI" "SUNI" "NUSI" "NUNI"
+# "EUEI" "EUVI" "VUEI" "EUMI" "VUVI" "EUSI" "MUEI" "VUMI" "SUEI" "EUNI" 
+# "MUVI" "VUSI" "SUVI" "MUMI""NUEI" "VUNI" "SUMI" "MUSI" "NUVI" "MUNI" 
+# "NUMI" "SUSI" "SUNI" "NUSI" "NUNI"
 # When tackling a bucket, all tasks are sorted using Quicksort
 
 # source(paste0("/Users/adamyormark/Google Drive/Personal/R/To Do", 
@@ -29,11 +29,11 @@
 ######### Future Goals ########################################################
 
 # Modifications need to be made to account for a todo item becoming 
-  # more urgent as time passes
+# more urgent as time passes
 # It may be safe to say that Importance remains constant, but Urgency changes
 # The need to re-rate aspects of specific items should be eliminated
 # Create a way for a single new item or small set of new items to be 
-  # efficiently inserted into an already-sorted list (append()?)
+# efficiently inserted into an already-sorted list (append()?)
 # Account for task size? Extra Large task, Large Task, Medium, etc.
 
 ######### Packages ############################################################
@@ -122,8 +122,8 @@ if (input_type == "csv") {
     
   }
   
-
-######### Asana Import ######################################################
+  
+  ######### Asana Import ######################################################
   
 } else if (input_type == "asana") {
   
@@ -179,23 +179,23 @@ eisenlikert <- function(task) {
   
   # Get Input on task urgency
   u <- readline(prompt = cat(white("---> ", unlist(task), " <---"), green("\n",  
-                             "5 = Extremely Urgent\n",
-                             "4 = Very Urgent\n",
-                             "3 = Moderately Urgent\n",
-                             "2 = Somewhat Urgent\n",
-                             "1 = Not Very Urgent\n", 
-                             sep = ""))) %>% 
+                                                                          "5 = Extremely Urgent\n",
+                                                                          "4 = Very Urgent\n",
+                                                                          "3 = Moderately Urgent\n",
+                                                                          "2 = Somewhat Urgent\n",
+                                                                          "1 = Not Very Urgent\n", 
+                                                                          sep = ""))) %>% 
     as.numeric %>% round %>% as.integer %>% 
     as_tibble %>% rename(Urgency = value)
-    
+  
   # Get Input on task importance
   i <- readline(prompt = cat(white("---> ", unlist(task), " <---"), green("\n",
-                             "5 = Extremely Important\n",
-                             "4 = Very Important\n",
-                             "3 = Moderately Important\n",
-                             "2 = Somewhat Important\n",
-                             "1 = Not Very Important\n", 
-                             sep = ""))) %>% 
+                                                                          "5 = Extremely Important\n",
+                                                                          "4 = Very Important\n",
+                                                                          "3 = Moderately Important\n",
+                                                                          "2 = Somewhat Important\n",
+                                                                          "1 = Not Very Important\n", 
+                                                                          sep = ""))) %>% 
     as.numeric %>% round %>% as.integer %>% 
     as_tibble %>% rename(Importance = value)
   
@@ -209,23 +209,23 @@ eisenlikert <- function(task) {
 # To be used within the quickSort() function
 # Output is either -1 or 1, similar output to greaterThan() from rje
 compare <- function (choice1, choice2) {
-    
-    choice1 <- choice1 %>% as.character()
-    choice2 <- choice2 %>% as.character()
-    
-    x <- c(choice1, choice2)
-    
-    cat(green("Which should be done first?", "\n"))
-    
-    # menu(choices, graphics = FALSE, title = NULL) 
-    selection <- menu(x, graphics = F, title = NULL)
-    
-    if (selection == 1) {
-      return(-1)
-    } else if (selection == 2) {
-      return(1)
-    }
-    
+  
+  choice1 <- choice1 %>% as.character()
+  choice2 <- choice2 %>% as.character()
+  
+  x <- c(choice1, choice2)
+  
+  cat(green("Which should be done first?", "\n"))
+  
+  # menu(choices, graphics = FALSE, title = NULL) 
+  selection <- menu(x, graphics = F, title = NULL)
+  
+  if (selection == 1) {
+    return(-1)
+  } else if (selection == 2) {
+    return(1)
+  }
+  
 }
 
 wait_for_key <- function(key) {
@@ -303,7 +303,7 @@ for (task in todo$Task) {
     
     # Combine input from this loop into full rating list
     ratings <- bind_rows(ratings, task_scores) %>% as.tbl()
-
+    
   }
   
 }
@@ -340,7 +340,7 @@ todo <- todo %>% mutate(EUEI = paste0(
             as.character(Importance) == 2 ~ "SI",
             as.character(Importance) == 1 ~ "NI",
             TRUE ~ as.character(Importance))
-  ))
+))
 
 # Create column with string for Urgency phrase
 todo <- todo %>% mutate(Urgency_str = case_when(
@@ -363,31 +363,31 @@ todo <- todo %>% mutate(Importance_str = case_when(
 
 # The order of tasks to move through
 do_order <- list(
-"EUEI" = list("EUEI","Delegate if Possible"),
-"EUVI" = list("EUVI", "Delegate if Possible"),
-"VUEI" = list("VUEI", "Delegate if Possible"),
-"EUMI" = list("EUMI", "Delegate if Possible"),
-"VUVI" = list("VUVI", "Delegate if Possible"),
-"EUSI" = list("EUSI", "Delegate if Possible"),
-"MUEI" = list("MUEI","Delegate if Possible"),
-"VUMI" = list("VUMI", "Delegate if Possible"),
-"SUEI" = list("SUEI", "Schedule"),
-"EUNI" = list("EUNI", "Delegate if Possible"),
-"MUVI" = list("MUVI", "Delegate if Possible"),
-"VUSI" = list("VUSI", "Delegate if Possible"),
-"SUVI" = list("SUVI", "Schedule"),
-"MUMI" = list("MUMI", "Delegate if Possible"),
-"NUEI" = list("NUEI", "Schedule"),
-"VUNI" = list("VUNI", "Delegate if Possible"),
-"SUMI" = list("SUMI", "Schedule"),
-"MUSI" = list("MUSI", "Delegate if Possible"),
-"NUVI" = list("NUVI", "Schedule"),
-"MUNI" = list("MUNI", "Delegate if Possible"),
-"NUMI" = list("NUMI", "Schedule"),
-"SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
-"SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
-"NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
-"NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
+  "EUEI" = list("EUEI","Delegate if Possible"),
+  "EUVI" = list("EUVI", "Delegate if Possible"),
+  "VUEI" = list("VUEI", "Delegate if Possible"),
+  "EUMI" = list("EUMI", "Delegate if Possible"),
+  "VUVI" = list("VUVI", "Delegate if Possible"),
+  "EUSI" = list("EUSI", "Delegate if Possible"),
+  "MUEI" = list("MUEI","Delegate if Possible"),
+  "VUMI" = list("VUMI", "Delegate if Possible"),
+  "SUEI" = list("SUEI", "Schedule"),
+  "EUNI" = list("EUNI", "Delegate if Possible"),
+  "MUVI" = list("MUVI", "Delegate if Possible"),
+  "VUSI" = list("VUSI", "Delegate if Possible"),
+  "SUVI" = list("SUVI", "Schedule"),
+  "MUMI" = list("MUMI", "Delegate if Possible"),
+  "NUEI" = list("NUEI", "Schedule"),
+  "VUNI" = list("VUNI", "Delegate if Possible"),
+  "SUMI" = list("SUMI", "Schedule"),
+  "MUSI" = list("MUSI", "Delegate if Possible"),
+  "NUVI" = list("NUVI", "Schedule"),
+  "MUNI" = list("MUNI", "Delegate if Possible"),
+  "NUMI" = list("NUMI", "Schedule"),
+  "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
+  "SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
+  "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
+  "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
 
 
 # Get rank of any EUEI in do_order
