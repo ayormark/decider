@@ -73,7 +73,7 @@ if (input_type == "csv") {
 
 # If testing, select how many tasks to rank
 # rm(testing_task_num)
-# testing_task_num <- 4
+testing_task_num <- 4
 
 # Run shiny app?
 shiny = FALSE
