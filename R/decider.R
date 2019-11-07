@@ -106,6 +106,7 @@ decider <- function(shiny = FALSE,
 
     todo <- data[[1]]
     prerated_todo <- data[[2]]
+
     rm(data)
 
     }
@@ -202,19 +203,18 @@ decider <- function(shiny = FALSE,
   # Order by most recently rated
   todo <- todo %>% arrange(-as.numeric(Date_Recorded))
 
+  ######### Save csv File of Rated Tasks ######################################
+
+  # Create new todo.csv or save over the previous version
+    write_csv(todo, paste0(getwd(), "/todo.csv"))
+
   ######### Post-Rating Prompts ###############################################
 
   cat(green("You have completed ranking Urgency and Importance \n\n"),
       sep = "")
   wait_for_key("c")
 
-  ######### Save Rated Tasks to csv file ######################################
-
-  if (!file.exists(prerated_todo_csv_path)) {
-    write_csv(todo, prerated_todo_csv_path)
-  }
-
-  ######### Add EUEI Abbreviation #############################################
+  ######### EUEI Abbreviations ################################################
 
   # Create four-letter EUEI abbreviation
   todo <- todo %>% mutate(EUEI = paste0(
@@ -254,7 +254,12 @@ decider <- function(shiny = FALSE,
 
   ######### EUEI Bucket Do-Order ##############################################
 
-  # The order of tasks to move through
+  # The order of task sections to move through and actions to be taken
+
+  # Determined by the chart below and a traveling set of diagonal lines
+  # https://docs.google.com/drawings/d/1XWlp9sYhuP-iULGH5so0Q9qumT0z1by
+  # hWzqo9fzRe7g/preview
+
   do_order <- list(
     "EUEI" = list("EUEI","Delegate if Possible"),
     "EUVI" = list("EUVI", "Delegate if Possible"),
@@ -269,15 +274,21 @@ decider <- function(shiny = FALSE,
     "MUVI" = list("MUVI", "Delegate if Possible"),
     "VUSI" = list("VUSI", "Delegate if Possible"),
     "SUVI" = list("SUVI", "Schedule"),
+    "SUEI" = list("SUEI", "Delegate if Possible"), # again, after scheduling
     "MUMI" = list("MUMI", "Delegate if Possible"),
     "NUEI" = list("NUEI", "Schedule"),
     "VUNI" = list("VUNI", "Delegate if Possible"),
     "SUMI" = list("SUMI", "Schedule"),
+    "SUVI" = list("SUVI", "Delegate if Possible"), # again, after scheduling
     "MUSI" = list("MUSI", "Delegate if Possible"),
     "NUVI" = list("NUVI", "Schedule"),
+    "NEUI" = list("NUEI", "Delegate if Possible"), # again, after scheduling
+    "SUMI" = list("SUMI", "Delegate if Possible"), # again, after scheduling
     "MUNI" = list("MUNI", "Delegate if Possible"),
     "NUMI" = list("NUMI", "Schedule"),
+    "NUVI" = list("NUVI", "Delegate if Possible"), # again, after scheduling
     "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
+    "NUMI" = list("NUMI", "Delegate if Possible"), # again, after scheduling
     "SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
     "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
     "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
