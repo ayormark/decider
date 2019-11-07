@@ -120,11 +120,8 @@ decider <- function(csv_path, csv_task_column_name = Task, testing_task_num) {
   # Output is either -1 or 1, similar output to greaterThan() from rje
   source(paste0(getwd(), "/R/compare.R"))
 
-  wait_for_key <- function(key) {
-    if (readline(prompt = cat("Press ", key, " to continue ", sep = "")) != key) {
-      wait_for_key(key)
-    }
-  }
+# wait for a key to be pressed before proceeding
+  source(paste0(getwd(), "/R/wait_for_key.R"))
 
   ######### Shiny ###############################################################
   if (shiny == TRUE) {
