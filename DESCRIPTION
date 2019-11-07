@@ -1,0 +1,31 @@
+Package: decider
+Title: Decide What To Do And When To Do It
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Adam",
+           family = "Yormark",
+           role = c("aut", "cre"),
+           email = "yormark93@gmail.com")
+Description: Decider minimizes time and effort when prioritizing tasks.
+    It uses a series of well-known productivity and organizational 
+    tools and merges them with principals from computer science to 
+    minimize cognitive effort to figure out what you should be working
+    on and when as quickly as possible.
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: 
+    asana,
+    rje,
+    stringr,
+    shiny,
+    crayon,
+    httr,
+    jsonlite,
+    qdapRegex,
+    here,
+    lubridate
+Remotes:
+    datacamp/asana
