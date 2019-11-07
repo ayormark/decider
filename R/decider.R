@@ -62,7 +62,10 @@ opendir <- function(directory = getwd()){
 ########## Decider Function ###################################################
 
 #' @export
-decider <- function(csv_path, csv_task_column_name = Task, testing_task_num) {
+decider <- function(shiny = FALSE,
+                    csv_path,
+                    csv_task_column_name = Task,
+                    testing_task_num) {
 
   # setwd("~/Google Drive/Personal/R/decider")
 
@@ -107,43 +110,32 @@ decider <- function(csv_path, csv_task_column_name = Task, testing_task_num) {
 
   ######### Functions ###########################################################
 
-  #### eisenlikert() function ####
+  #### eisenlikert function ####
   # The eisenlikert() function asks user to rank Urgency and Importance from 1-5
   # 5 is the most Urgent or most Important
   # Output is a tibble with two elements, Urgency and Importance, as integers
   source(paste0(getwd(), "/R/eiskenlikert.R"))
 
 
-  #### compare() function ####
+  #### compare function ####
   # A function to choose which of two options is more important
   # To be used within the quickSort() function
   # Output is either -1 or 1, similar output to greaterThan() from rje
   source(paste0(getwd(), "/R/compare.R"))
 
+  #### wait_for_key function ####
 # wait for a key to be pressed before proceeding
   source(paste0(getwd(), "/R/wait_for_key.R"))
+
+  #### Use GUI with shiny ####
+  source(paste0(getwd(), "/R/shiny.R"))
 
   ######### Shiny ###############################################################
   if (shiny == TRUE) {
 
-    ui <- fluidPage(
-      # *Input() functions here
-      # *Output() functions here
-      actionButton("1Button", "1"),
-      actionButton("1Button", "2"),
-      actionButton("1Button", "3"),
-      actionButton("1Button", "4"),
-      actionButton("1Button", "5")
-    )
+    shiny()
 
-    # Input: user rating
-    # Output: Task list, ranked, then sorted
-    server <- function(input, output) {}
-
-    shinyApp(ui = ui, server = server)
-
-  }
-
+    }
   ######### Rate Each Task ######################################################
   # eisenlikert Rating
 
