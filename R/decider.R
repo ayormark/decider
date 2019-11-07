@@ -135,7 +135,7 @@ decider <- function(shiny = FALSE,
     shiny()
 
     }
-  ######### Prompts before rating #############################################
+  ######### Pre-Rating Prompts ################################################
 
   # Tell user how many tasks they are about to rate
   asana_user_info <- asn_users_me()
@@ -153,8 +153,7 @@ decider <- function(shiny = FALSE,
 
   ######### Rate Each Task ######################################################
 
-
-  # Choose column names
+  # Column names
   ratings_columns <- c("Task", "Urgency", "Importance", "Date_Recorded")
 
   # Create empty dataframe with same number of columns
@@ -163,11 +162,14 @@ decider <- function(shiny = FALSE,
   colnames(ratings) <- ratings_columns
 
   # When testing, you may select a subset of tasks to reduce testing time
-  if (exists("testing_task_num")) { todo <- todo %>% sample_n(testing_task_num) }
+  if (exists("testing_task_num")) {
+    todo <- todo %>% sample_n(testing_task_num)
+    }
 
   # Run the eisenlikert function on each task and add ratings to the dataframe
   for (task in todo$Task) {
 
+    # If the task has not already been rated, proceed with rating it
     if (!(task %in% prerated_todo$Task)) {
       # Ask for ratings and store input
       rating <- eisenlikert(task)
@@ -192,18 +194,25 @@ decider <- function(shiny = FALSE,
   # Merge ratings back into original list
   todo <- full_join(ratings, todo, by = "Task")
 
+  # Add composite score for user to gain an intuitive sense of task value
   todo <- todo %>% mutate(Composite = 4 * Urgency * Importance)
 
+  # Order by most recently rated
   todo <- todo %>% arrange(-as.numeric(Date_Recorded))
 
-  cat(green("You have completed ranking Urgency and Importance \n\n"), sep = "")
+  ######### Post-Rating Prompts ###############################################
+
+  cat(green("You have completed ranking Urgency and Importance \n\n"),
+      sep = "")
   wait_for_key("c")
+
+  ######### Save Rated Tasks to csv file ######################################
 
   if (!file.exists(prerated_todo_csv_path)) {
     write_csv(todo, prerated_todo_csv_path)
   }
 
-  ######### EUEI Abbreviation and strings #######################################
+  ######### Add EUEI Abbreviation #############################################
 
   # Create four-letter EUEI abbreviation
   todo <- todo %>% mutate(EUEI = paste0(
@@ -241,6 +250,7 @@ decider <- function(shiny = FALSE,
     as.character(Importance) == 1 ~ "Not Very Important",
     TRUE ~ as.character(Importance)))
 
+  ######### EUEI Bucket Do-Order ##############################################
 
   # The order of tasks to move through
   do_order <- list(
@@ -250,7 +260,7 @@ decider <- function(shiny = FALSE,
     "EUMI" = list("EUMI", "Delegate if Possible"),
     "VUVI" = list("VUVI", "Delegate if Possible"),
     "EUSI" = list("EUSI", "Delegate if Possible"),
-    "MUEI" = list("MUEI","Delegate if Possible"),
+    "MUEI" = list("MUEI", "Delegate if Possible"),
     "VUMI" = list("VUMI", "Delegate if Possible"),
     "SUEI" = list("SUEI", "Schedule"),
     "EUNI" = list("EUNI", "Delegate if Possible"),
@@ -271,10 +281,7 @@ decider <- function(shiny = FALSE,
     "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
 
 
-  # Get rank of any EUEI in do_order
-  # match(EUEI, names(do_order))
-
-  ######### Reorder in Asana ####################################################
+  ######### Reorder in Asana - Rough ##########################################
 
   # (Future Plan)
 
@@ -289,11 +296,11 @@ decider <- function(shiny = FALSE,
     # Filter todo list by most pressing EUEI bucket
     set <- todo %>% filter(EUEI == abbrev)
 
-    # Display Green Message when starting a new EUEI Bucket
+    # Display Green Message prompt when starting a new EUEI Bucket
     if (nrow(set) > 0) {
       cat(green(abbrev, " Tasks: ",
-                # Show a composite score, 1-100 to help intuition
-                "(", set$Composite[[1]], ") ",
+                # Show Composite score, 1-100 to help intuition
+                "(Scored: ", set$Composite[[1]], "/100) ",
                 set$Urgency_str[[1]], " & ", set$Importance_str[[1]],
                 sep = ""), "\n\n")
 
@@ -314,6 +321,7 @@ decider <- function(shiny = FALSE,
       }
 
 
+      # Prompt user to Do/Delegate/etc. the task
       for (task in set$Task) {
 
         # Display suggested action based on EUEI, e.g. "Delegate if Possible"
