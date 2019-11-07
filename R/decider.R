@@ -66,8 +66,7 @@ opendir <- function(directory = getwd()){
 #' @export
 decider <- function(csv_path, csv_task_column_name = Task) {
 
-
-  setwd("~/Google Drive/Personal/R/decider")
+  # setwd("~/Google Drive/Personal/R/decider")
 
   # Choose whether to import csv or connect with Asana API
   input_type <- "asana"
@@ -96,63 +95,15 @@ decider <- function(csv_path, csv_task_column_name = Task) {
 
   }
 
-
   ######### Asana Import ######################################################
 
-  if (input_type == "asana") {
-
-
-    ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
-    my_tasks_project_gid <- Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
-    project_gid <- my_tasks_project_gid
-    endpoint <- paste0("projects/", project_gid, "/tasks")
-
-    # Functions for Asana Tasks:
-    # https://github.com/datacamp/asana/blob/master/R/tasks.R
-
-    # call asana API to get list of tasks and transform into tibble
-    # response <- call_asana_api(endpoint, ASANA_ACCESS_TOKEN) %>% as_tibble()
-    # response_data <- response$data %>% as_tibble
-
-    # Get tibble of not-yet-completed mytasks
-    todo <- asana::asn_tasks_find_by_project(my_tasks_project_gid,
-                                      completed_since = "now")
-
-    # Dispatch a full GET request to Asana
-    # asana::asn_get("/projects/932414416064709/tasks", completed_since="now")
-
-    # WORKING_MYTASK_URL:
-    # "https://app.asana.com/api/1.0/projects/932414416064709/tasks"
-    # Pretty Version:
-    # https://app.asana.com/api/1.0/projects/932414416064709/tasks/?opt_pretty
-
-    # Example: get details for a specific task by id
-    # asn_tasks_find_by_id("955209932596796")
-
-    todo <- todo %>% rename(Task = name)
-
-    # Get the expected path of the list of already-rated tasks
-    prerated_todo_csv_path <- paste0(getwd(), "/todo.csv")
-
-    # Merge in past ratings of tasks to avoid re-rating
-    if (file.exists(prerated_todo_csv_path)) {
-      prerated_todo <- read_csv(prerated_todo_csv_path) %>%
-        mutate(gid = as.character(gid))
-    } else {
-      # If there are no past ratings, create an empty "prerated" tibble
-      prerated_todo <- tibble(gid = NA) %>% filter(!is.na(gid)) %>%
-        mutate(gid = as.character(gid))
-    }
-
-  }
-
+  if (input_type == "asana") {asana_import()}
 
   ######### Functions ###########################################################
 
   # The eisenlikert() function asks user to rank Urgency and Importance from 1-5
   # 5 is the most Urgent or most Important
   # Output is a tibble with two elements, Urgency and Importance, as integers
-
   source(paste0(getwd(), "/eiskenlikert.R"))
 
 
