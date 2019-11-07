@@ -95,7 +95,15 @@ decider <- function(csv_path, csv_task_column_name = Task, testing_task_num) {
 
   ######### Asana Import ######################################################
 
-  if (input_type == "asana") {asana_import()}
+  if (input_type == "asana") {
+
+    data <- asana_import()
+
+    todo <- data[[1]]
+    prerated_todo <- data[[2]]
+    rm(data)
+
+    }
 
   ######### Functions ###########################################################
 
