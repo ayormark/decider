@@ -13,7 +13,6 @@
 # library(qdapRegex)
 # library(asana) # Development build, remotes::install_github("datacamp/asana")
 # library(lubridate)
-# library(here)
 # library(RCurl)
 # library(rvest)
 # library(rebus)
@@ -54,22 +53,19 @@ asana_import <- function(
 
   todo <- todo %>% rename(Task = name)
 
-  return(todo)
-
   # Get the expected path of the list of already-rated tasks
-  prerated_todo_csv_path <- paste0(here(), "/todo.csv")
+  prerated_todo_csv_path <- paste0(getwd(), "/todo.csv")
 
   # Merge in past ratings of tasks to avoid re-rating
   if (file.exists(prerated_todo_csv_path)) {
     prerated_todo <- read_csv(prerated_todo_csv_path) %>%
       mutate(gid = as.character(gid))
-    return(prerated_todo)
 
   } else {
     # If there are no past ratings, create an empty "prerated" tibble
     prerated_todo <- tibble(gid = NA) %>% filter(!is.na(gid)) %>%
       mutate(gid = as.character(gid))
-    return(prerated_todo)
   }
+  output <- list(todo, prerated_todo)
 }
 

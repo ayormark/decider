@@ -26,7 +26,7 @@
 # source(paste0("/Users/adamyormark/Google Drive/Personal/R/To Do",
 #               "Prioritization Optimization Tool.R"))
 
-######### Future Goals ########################################################
+########## Future Goals #######################################################
 
 # Modifications need to be made to account for a todo item becoming
 # more urgent as time passes
@@ -36,7 +36,6 @@
 # efficiently inserted into an already-sorted list (append()?)
 # Account for task size? Extra Large task, Large Task, Medium, etc.
 
-######### Packages ############################################################
 #' @import tidyverse
 #' @import rje
 #' @import stringr
@@ -60,11 +59,10 @@ opendir <- function(directory = getwd()){
   system(sprintf('open %s', shQuote(directory)))
 }
 
-
-######### Parameters ##########################################################
+########## Decider Function ###################################################
 
 #' @export
-decider <- function(csv_path, csv_task_column_name = Task) {
+decider <- function(csv_path, csv_task_column_name = Task, testing_task_num) {
 
   # setwd("~/Google Drive/Personal/R/decider")
 
@@ -78,7 +76,7 @@ decider <- function(csv_path, csv_task_column_name = Task) {
 
   # If testing, select how many tasks to rank
   # rm(testing_task_num)
-  testing_task_num <- 4
+  # testing_task_num <- 4
 
   # Run shiny app?
   shiny = FALSE
@@ -101,12 +99,14 @@ decider <- function(csv_path, csv_task_column_name = Task) {
 
   ######### Functions ###########################################################
 
+  #### eisenlikert() function ####
   # The eisenlikert() function asks user to rank Urgency and Importance from 1-5
   # 5 is the most Urgent or most Important
   # Output is a tibble with two elements, Urgency and Importance, as integers
   source(paste0(getwd(), "/R/eiskenlikert.R"))
 
 
+  #### compare() function ####
   # A function to choose which of two options is more important
   # To be used within the quickSort() function
   # Output is either -1 or 1, similar output to greaterThan() from rje
