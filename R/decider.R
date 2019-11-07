@@ -100,6 +100,8 @@ decider <- function(shiny = FALSE,
 
   if (input_type == "asana") {
 
+    source(paste0(getwd(), "/R/asana_import.R"))
+
     data <- asana_import()
 
     todo <- data[[1]]
@@ -285,7 +287,7 @@ decider <- function(shiny = FALSE,
 
   # (Future Plan)
 
-  ######### QuickSort and Do Tasks ##############################################
+  ######### QuickSort and Do Tasks ############################################
 
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
@@ -344,6 +346,8 @@ decider <- function(shiny = FALSE,
     }
   }
 
+  ######### Completion Prompt #################################################
+
   return(cat(bold(green("\nCongratulations!", "\n\n",
                         "You have completed all tasks!", sep = ""))))
 
@@ -353,5 +357,5 @@ decider <- function(shiny = FALSE,
   # projects for more information.
 
 
-
 }
+
