@@ -2,12 +2,12 @@
 # Adam Yormark
 # Decider
 
-# The purpose of this script is to dramatically reduce the amount of time and
-# mental effort it takes to decide which tasks to do and in what order
+# Decider dramatically reduces the amount of time and mental effort it takes
+# to decide which tasks to do and in what order to do them
 # This script is designed to work with Asana, but can be modified
 # to work with any csv or list of tasks
 
-# This script accomplishes this goal by combining together these concepts:
+# We accomplish this goal by combining together these established concepts:
 # The Eisenhower Matrix
 # https://www.eisenhower.me/eisenhower-matrix/
 # Likert Scale
@@ -21,20 +21,20 @@
 # "EUEI" "EUVI" "VUEI" "EUMI" "VUVI" "EUSI" "MUEI" "VUMI" "SUEI" "EUNI"
 # "MUVI" "VUSI" "SUVI" "MUMI""NUEI" "VUNI" "SUMI" "MUSI" "NUVI" "MUNI"
 # "NUMI" "SUSI" "SUNI" "NUSI" "NUNI"
+
 # When tackling a bucket, all tasks are sorted using Quicksort
 
-# source(paste0("/Users/adamyormark/Google Drive/Personal/R/To Do",
-#               "Prioritization Optimization Tool.R"))
+#### Future Goals ####
 
-########## Future Goals #######################################################
-
+# Have decider automatically rearrange tasks in asana
 # Modifications need to be made to account for a todo item becoming
-# more urgent as time passes
+  # more urgent as time passes
 # It may be safe to say that Importance remains constant, but Urgency changes
 # The need to re-rate aspects of specific items should be eliminated
 # Create a way for a single new item or small set of new items to be
-# efficiently inserted into an already-sorted list (append()?)
+  # efficiently inserted into an already-sorted list (append()?)
 # Account for task size? Extra Large task, Large Task, Medium, etc.
+
 
 #' @import tidyverse
 #' @import rje
@@ -116,7 +116,6 @@ decider <- function(shiny = FALSE,
   # Output is a tibble with two elements, Urgency and Importance, as integers
   source(paste0(getwd(), "/R/eiskenlikert.R"))
 
-
   #### compare function ####
   # A function to choose which of two options is more important
   # To be used within the quickSort() function
@@ -136,8 +135,7 @@ decider <- function(shiny = FALSE,
     shiny()
 
     }
-  ######### Rate Each Task ######################################################
-  # eisenlikert Rating
+  ######### Prompts before rating #############################################
 
   # Tell user how many tasks they are about to rate
   asana_user_info <- asn_users_me()
@@ -152,6 +150,8 @@ decider <- function(shiny = FALSE,
   }
 
   wait_for_key("c")
+
+  ######### Rate Each Task ######################################################
 
 
   # Choose column names
