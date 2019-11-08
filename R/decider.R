@@ -175,10 +175,14 @@ decider <- function(run_shiny = FALSE,
   # Name the columns
   colnames(ratings) <- ratings_columns
 
+  # Tasks to Test with
   # When testing, you may select a subset of tasks to reduce testing time
+  if (testing_task_num > nrow(todo)) {
+    stop("testing number must be smaller than table size")
+    }
   if (!is.na(testing_task_num)) {
     todo <- todo %>% sample_n(testing_task_num)
-    }
+  }
 
   # Run the eisenlikert function on each task and add ratings to the dataframe
   for (task in todo$Task) {
