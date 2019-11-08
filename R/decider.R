@@ -47,25 +47,31 @@
 #' @import here
 #' @import lubridate
 #' @import asana
+#'
+
+library(tidyverse)
+library(rje)
+library(stringr)
+library(shiny)
+library(crayon)
+library(httr)
+library(jsonlite)
+library(qdapRegex)
+library(here)
+library(lubridate)
+library(asana)
+
 # library(RCurl)
 # library(rvest)
 # library(rebus)
 
-# library(asana)
-
-
-# Handy function to open working directory for testing
-opendir <- function(directory = getwd()){
-  system(sprintf('open %s', shQuote(directory)))
-}
-
 ########## Decider Function ###################################################
 
 #' @export
-decider <- function(shiny = FALSE,
+decider <- function(run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = Task,
-                    testing_task_num) {
+                    testing_task_num = NULL) {
 
   # setwd("~/Google Drive/Personal/R/decider")
 
@@ -80,9 +86,6 @@ decider <- function(shiny = FALSE,
   # If testing, select how many tasks to rank
   # rm(testing_task_num)
   # testing_task_num <- 4
-
-  # Run shiny app?
-  shiny = FALSE
 
   ######### CSV Import ##########################################################
 
@@ -130,12 +133,12 @@ decider <- function(shiny = FALSE,
   source(paste0(getwd(), "/R/wait_for_key.R"))
 
   #### Use GUI with shiny ####
-  source(paste0(getwd(), "/R/shiny.R"))
+  source(paste0(getwd(), "/R/run_shiny.R"))
 
   ######### Shiny ###############################################################
-  if (shiny == TRUE) {
+  if (run_shiny == TRUE) {
 
-    shiny()
+    shiny(run_shiny)
 
     }
   ######### Pre-Rating Prompts ################################################
