@@ -57,13 +57,13 @@ asana_import <- function(
   prerated_todo_csv_path <- paste0(getwd(), "/todo.csv")
 
   # Merge in past ratings of tasks to avoid re-rating
-  if (file.exists(prerated_todo_csv_path)) {
+  if (file.exists("prerated_todo_csv_path")) {
     prerated_todo <- read_csv(prerated_todo_csv_path) %>%
       mutate(gid = as.character(gid))
 
   } else {
     # If there are no past ratings, create an empty "prerated" tibble
-    prerated_todo <- tibble(gid = NA) %>% filter(!is.na(gid)) %>%
+    prerated_todo <- tibble(gid = NA, Task = NA) %>% filter(!is.na(gid)) %>%
       mutate(gid = as.character(gid))
   }
   output <- list(todo, prerated_todo)

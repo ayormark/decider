@@ -65,13 +65,20 @@ library(asana)
 # library(rvest)
 # library(rebus)
 
+########## Testing Parameters #################################################
+
+run_shiny <- FALSE
+# csv_path <-
+# csv_task_column_name <- Task
+testing_task_num = 3
+
 ########## Decider Function ###################################################
 
 #' @export
 decider <- function(run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = Task,
-                    testing_task_num = NULL) {
+                    testing_task_num = NA) {
 
   # setwd("~/Google Drive/Personal/R/decider")
 
@@ -151,7 +158,8 @@ decider <- function(run_shiny = FALSE,
 
   cat(green("You have", todo %>% nrow(), "tasks to rate", "\n"), sep = "")
 
-  if (exists("testing_task_num")) {
+  # If the testing number isn't NA, sample that many Tasks
+  if (!is.na(testing_task_num)) {
     cat(red("Note: testing with", testing_task_num, "Tasks\n"))
   }
 
@@ -168,7 +176,7 @@ decider <- function(run_shiny = FALSE,
   colnames(ratings) <- ratings_columns
 
   # When testing, you may select a subset of tasks to reduce testing time
-  if (exists("testing_task_num")) {
+  if (!is.na(testing_task_num)) {
     todo <- todo %>% sample_n(testing_task_num)
     }
 
@@ -215,6 +223,7 @@ decider <- function(run_shiny = FALSE,
 
   cat(green("You have completed ranking Urgency and Importance \n\n"),
       sep = "")
+
   wait_for_key("c")
 
   ######### EUEI Abbreviations ################################################
