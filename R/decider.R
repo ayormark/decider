@@ -281,7 +281,7 @@ decider <- function(input_type = "asana",
   # hWzqo9fzRe7g/preview
 
   do_order <- list(
-    "EUEI" = list("EUEI","Delegate if Possible"),
+    "EUEI" = list("EUEI", "Delegate if Possible"),
     "EUVI" = list("EUVI", "Delegate if Possible"),
     "VUEI" = list("VUEI", "Delegate if Possible"),
     "EUMI" = list("EUMI", "Delegate if Possible"),
@@ -324,7 +324,10 @@ decider <- function(input_type = "asana",
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
 
   # Go through each EUEI bucket in pre-determined order
-  for (abbrev in names(do_order)) {
+  for (i in 1:length(do_order)) {
+
+    # Set abbrev to ith entry in do_order
+    abbrev <- do_order %>% names %>% .[[i]]
 
     # Filter todo list by most pressing EUEI bucket
     set <- todo %>% filter(EUEI == abbrev)
@@ -358,7 +361,7 @@ decider <- function(input_type = "asana",
       for (task in set$Task) {
 
         # Display suggested action based on EUEI, e.g. "Delegate if Possible"
-        if (do_order[[abbrev]][[2]] == "Schedule") {
+        if (do_order[[i]][[2]] == "Schedule") {
           cat(red("Do not do yet, just schedule:\n"))
         } else {
           cat(green(do_order[[abbrev]][[2]]), "\n")
