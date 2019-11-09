@@ -16,13 +16,13 @@
 # https://www.youtube.com/watch?v=WaNLJf8xzC4
 
 # After importing the to do list, each task is then rated from 1-5 on both
-# Urgency and Importance. These make up 25 "buckets"
-# After Analysis the order of completion for buckets has been determined to be:
+# Urgency and Importance. These make up 25 "bins"
+# After Analysis the order of completion for bins has been determined to be:
 # "EUEI" "EUVI" "VUEI" "EUMI" "VUVI" "EUSI" "MUEI" "VUMI" "SUEI" "EUNI"
 # "MUVI" "VUSI" "SUVI" "MUMI""NUEI" "VUNI" "SUMI" "MUSI" "NUVI" "MUNI"
 # "NUMI" "SUSI" "SUNI" "NUSI" "NUNI"
 
-# When tackling a bucket, all tasks are sorted using Quicksort
+# When tackling a bin, all tasks within that bin are sorted using Quicksort
 
 #### Future Goals ####
 
@@ -272,7 +272,7 @@ decider <- function(input_type = "asana",
     as.character(Importance) == 1 ~ "Not Very Important",
     TRUE ~ as.character(Importance)))
 
-  ######### EUEI Bucket Do-Order ##############################################
+  ######### EUEI Bin Do-Order #################################################
 
   # The order of task sections to move through and actions to be taken
 
@@ -323,34 +323,34 @@ decider <- function(input_type = "asana",
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
 
-  # Go through each EUEI bucket in pre-determined order
+  # Go through each EUEI bin in pre-determined order
   for (i in 1:length(do_order)) {
 
     # Set abbrev to ith entry in do_order
     abbrev <- do_order %>% names %>% .[[i]]
 
-    # Filter todo list by most pressing EUEI bucket
-    set <- todo %>% filter(EUEI == abbrev)
+    # Filter todo list by most pressing EUEI bin
+    bin <- todo %>% filter(EUEI == abbrev)
 
-    # Display Green Message prompt when starting a new EUEI Bucket
-    if (nrow(set) > 0) {
+    # Display Green Message prompt when moving to the next EUEI bin
+    if (nrow(bin) > 0) {
       cat(green(abbrev, " Tasks: ",
                 # Show Composite score, 1-100 to help intuition
-                "(Scored: ", set$Composite[[1]], "/100) ",
-                set$Urgency_str[[1]], " & ", set$Importance_str[[1]],
+                "(Scored: ", bin$Composite[[1]], "/100) ",
+                bin$Urgency_str[[1]], " & ", bin$Importance_str[[1]],
                 sep = ""), "\n\n")
 
-      # Perform quicksort for all tasks in this bucket
-      set <- set %>%
-        mutate(set_order = quickSort(set$Task, compare)) %>%
+      # Perform quicksort for all tasks in this bin
+      bin <- bin %>%
+        mutate(bin_order = quickSort(bin$Task, compare)) %>%
         # rearrange order by quickSort results
-        arrange(by = set_order)
+        arrange(by = bin_order)
 
-      if (nrow(set) > 1) {
+      if (nrow(bin) > 1) {
         # Only state that ordering is completed if more than 1 task in process
         cat(green("You have ordered all ",
-                  set$Urgency_str[[1]], " & ", set$Importance_str[[1]],
-                  " (", set$Composite[[1]], ")" ," tasks!",
+                  bin$Urgency_str[[1]], " & ", bin$Importance_str[[1]],
+                  " (", bin$Composite[[1]], ")" ," tasks!",
                   "\n\n", sep = ""))
 
         wait_for_key("c")
@@ -358,7 +358,7 @@ decider <- function(input_type = "asana",
 
 
       # Prompt user to Do/Delegate/etc. the task
-      for (task in set$Task) {
+      for (task in bin$Task) {
 
         # Display suggested action based on EUEI, e.g. "Delegate if Possible"
         if (do_order[[i]][[2]] == "Schedule") {
