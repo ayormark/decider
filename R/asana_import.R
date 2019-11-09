@@ -67,5 +67,6 @@ asana_import <- function(
       mutate(gid = as.character(gid))
   }
   output <- list(todo, prerated_todo)
+  return(output)
 }
 

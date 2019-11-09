@@ -35,6 +35,7 @@
   # efficiently inserted into an already-sorted list (append()?)
 # Account for task size? Extra Large task, Large Task, Medium, etc.
 
+#### Packages ####
 
 #' @import tidyverse
 #' @import rje
@@ -67,23 +68,27 @@ library(asana)
 
 ########## Testing Parameters #################################################
 
+input_type <- "asana"
+asana_project_gid <- Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
 run_shiny <- FALSE
 # csv_path <-
-# csv_task_column_name <- Task
-testing_task_num = 3
+csv_task_column_name = "Task"
+testing_task_num = 4
 
 ########## Decider Function ###################################################
 
 #' @export
-decider <- function(run_shiny = FALSE,
+decider <- function(input_type = "asana",
+                    asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+                    run_shiny = FALSE,
                     csv_path,
-                    csv_task_column_name = Task,
+                    csv_task_column_name = "Task",
                     testing_task_num = NA) {
 
   # setwd("~/Google Drive/Personal/R/decider")
 
   # Choose whether to import csv or connect with Asana API
-  input_type <- "asana"
+  # input_type <- "asana"
   # input_type <- "csv"
   if (input_type == "csv") {
     csv_folder <- "/Users/adamyormark/Downloads/"
@@ -112,7 +117,7 @@ decider <- function(run_shiny = FALSE,
 
     source(paste0(getwd(), "/R/asana_import.R"))
 
-    data <- asana_import()
+    data <- asana_import(project_gid = asana_project_gid)
 
     todo <- data[[1]]
     prerated_todo <- data[[2]]
@@ -177,10 +182,17 @@ decider <- function(run_shiny = FALSE,
 
   # Tasks to Test with
   # When testing, you may select a subset of tasks to reduce testing time
-  if (testing_task_num > nrow(todo)) {
-    stop("testing number must be smaller than table size")
-    }
+  print(testing_task_num)
+  print(nrow(todo))
+
+# If there is a testing number, sample that many tasks from todo list
   if (!is.na(testing_task_num)) {
+
+    if (testing_task_num > nrow(todo)) {
+      # Stop is testing number is larger than tasks available
+      stop("testing number must be smaller than table size")
+    }
+
     todo <- todo %>% sample_n(testing_task_num)
   }
 
