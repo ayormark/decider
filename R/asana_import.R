@@ -18,7 +18,7 @@
 # library(rebus)
 
 
-######### Asana Import ########################################################
+######### Function ########################################################
 
 asana_import <- function(
 # see https://github.com/datacamp/asana for information on these inputs
@@ -39,6 +39,10 @@ asana_import <- function(
   # Get tibble of not-yet-completed mytasks
   todo <- asn_tasks_find_by_project(project_gid,
                                     completed_since = "now")
+
+  if (class(todo) == "asana_api") {
+    stop("project is empty, no tasks to rate")
+  }
 
   # Dispatch a full GET request to Asana
   # asana::asn_get("/projects/932414416064709/tasks", completed_since="now")
