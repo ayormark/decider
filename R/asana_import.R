@@ -40,7 +40,8 @@ asana_import <- function(
   todo <- asn_tasks_find_by_project(project_gid,
                                     completed_since = "now")
 
-  if (class(todo) == "asana_api") {
+  # Error handling for if asana project has no tasks within it
+  if (class(todo)[[1]] == "asana_api") {
     stop("project is empty, no tasks to rate")
   }
 
