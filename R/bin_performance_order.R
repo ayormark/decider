@@ -1,6 +1,6 @@
 ######### Info ################################################################
 # Adam Yormark
-# get_ui_rankings function for Decider
+# bin_performance_order function for Decider
 
 ######### Documentation #######################################################
 
@@ -24,11 +24,11 @@
 #' @param bin_u_min The lowest integer tank for Urgency
 #' @param bin_i_min The lowest integer tank for Importance
 #' @examples
-#' get_ui_rankings(urgency_bias = 1.4)
+#' bin_performance_order(urgency_bias = 1.4)
 
 ######### Function ############################################################
 
-get_ui_rankings <- function (urgency_bias = 1.4,
+bin_performance_order <- function (urgency_bias = 1.4,
                              bin_u_max = 5,
                              bin_i_max = 5,
                              bin_u_min = 1,

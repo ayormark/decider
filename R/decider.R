@@ -17,16 +17,18 @@
 
 # After importing the to do list, each task is then rated from 1-5 on both
 # Urgency and Importance. These make up 25 "bins"
-# After Analysis the order of completion for bins has been determined to be:
-# "EUEI" "EUVI" "VUEI" "EUMI" "VUVI" "EUSI" "MUEI" "VUMI" "SUEI" "EUNI"
-# "MUVI" "VUSI" "SUVI" "MUMI""NUEI" "VUNI" "SUMI" "MUSI" "NUVI" "MUNI"
-# "NUMI" "SUSI" "SUNI" "NUSI" "NUNI"
+# The order of completion of bins is determined by moving a diagonal line
+# through a 5x5 grid of points, each with coordinates (x, y) synonymous with
+# (i, u). As the line touches a point, that bin is performed.
 
 # When tackling a bin, all tasks within that bin are sorted using Quicksort
 
 #### Future Goals ####
 
-# Have decider automatically rearrange tasks in asana
+# Automatically rearrange tasks in asana
+# Automatically create Sections in asana list
+  # Delegate, Do Now, Schedule
+  # Bins
 # Use a tool like mechanical turk to determine the actual order in which EUEI
   # bins should be completed
 # Modifications need to be made to account for a todo item becoming
