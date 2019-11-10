@@ -37,6 +37,47 @@
   # efficiently inserted into an already-sorted list (append()?)
 # Account for task size? Extra Large task, Large Task, Medium, etc.
 
+######### Documentation #######################################################
+
+#' Decide What To Do And When To Do It
+#' @description Decider dramatically reduces the amount of time and mental
+#' effort it takes
+#' to decide which tasks to do and in what order to do them
+#' Primarily focused on integrating with Asana, but can be modified to work
+#' with any csv or list of tasks
+#'
+#' We accomplish this goal by combining together these established concepts:
+#'
+#' The Eisenhower Matrix:
+#' https://www.eisenhower.me/eisenhower-matrix/
+#'
+#' Likert Scale:
+#' https://www.simplypsychology.org/likert-scale.html
+#'
+#' QuickSort:
+#' https://www.youtube.com/watch?v=WaNLJf8xzC4
+#' @param input_type The method to import tasks into decider.
+#' Can be "asana" or "csv"
+#' @param asana_project_gid The global identifier for an asana project.
+#' Can usually be found in the project URL.
+#' @param run_shiny Choose whether to run the GUI for decider
+#' @param csv_path The filepath to a csv with a list of tasks
+#' @param csv_task_column_name The name of the column containing the task list
+#' within a csv file
+#' @param testing_task_num A number of tasks you'd like to sample from the
+#' total list of tasks. For testing decider functionality.
+#' @export
+#' @details Follow the instructions for the asana package to make usage easier
+#' https://github.com/datacamp/asana/blob/master/README.md
+#' @examples
+#' decider(
+#' input_type = "asana",
+#' asana_project_gid = "123456789101112,
+#' asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+#' csv_task_column_name = "Task",
+#' testing_task_num = 4)
+
+
 #### Packages ####
 
 #' @import tidyverse
@@ -45,33 +86,12 @@
 #' @import shiny
 #' @import crayon
 #' @import httr
-#' @import jsonlite
 #' @import qdapRegex
-#' @import here
 #' @import lubridate
 #' @import asana
-#'
-
-library(tidyverse)
-library(rje)
-library(stringr)
-library(shiny)
-library(crayon)
-library(httr)
-library(jsonlite)
-library(qdapRegex)
-library(here)
-library(lubridate)
-library(asana)
-
-# library(RCurl)
-# library(rvest)
-# library(rebus)
-
 
 ########## Decider Function ###################################################
 
-#' @export
 decider <- function(input_type = "asana",
                     asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
                     run_shiny = FALSE,
