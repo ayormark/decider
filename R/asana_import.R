@@ -2,6 +2,20 @@
 # Adam Yormark
 # asana_import function for Decider
 
+#' Gets tasks from a project in Asana
+#' @param ASANA_ACCESS_TOKEN An Asana access token.
+#' You can get your own personal Asana access token here:
+#' https://asana.com/guide/help/api/api#gl-access-tokens
+#' @param project_gid The gid identifier for a specific project in Asana,
+#' found in the URL
+#' @export
+#' @details Follow the instructions for the asana package to make usage easier
+#' https://github.com/datacamp/asana/blob/master/README.md
+#' @examples
+#' asana_import(
+#' ASANA_ACCESS_TOKEN = "add_your_34_chr_asana_access_token",
+#' project_gid = "123456789101112")
+
 ######### Packages ############################################################
 # library(tidyverse)
 # library(rje) # quickSort()

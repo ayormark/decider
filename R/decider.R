@@ -27,6 +27,8 @@
 #### Future Goals ####
 
 # Have decider automatically rearrange tasks in asana
+# Use a tool like mechanical turk to determine the actual order in which EUEI
+  # bins should be completed
 # Modifications need to be made to account for a todo item becoming
   # more urgent as time passes
 # It may be safe to say that Importance remains constant, but Urgency changes
@@ -393,14 +395,14 @@ decider <- function(input_type = "asana",
 }
 
 ########## Testing with Parameters ############################################
-
-decider(input_type = "asana",
-        # An Asana project to test with "Test Project" gid: 1148823248153567
-        asana_project_gid = "1148823248153567",
-        # asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
-        # run_shiny = FALSE,
-        # csv_path,
-        # csv_task_column_name = "Task",
-        testing_task_num = NA)
-
+#
+# decider(input_type = "asana",
+#         # An Asana project to test with "Test Project" gid: 1148823248153567
+#         asana_project_gid = "1148823248153567",
+#         # asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+#         # run_shiny = FALSE,
+#         # csv_path,
+#         # csv_task_column_name = "Task",
+#         testing_task_num = NA)
+#
 
