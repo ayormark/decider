@@ -41,7 +41,7 @@ https://www.eisenhower.me/eisenhower-matrix/
 Likert Scale:
 https://www.simplypsychology.org/likert-scale.html
 
-Quick Sort:
+QuickSort:
 https://www.youtube.com/watch?v=WaNLJf8xzC4
 }
 \details{
