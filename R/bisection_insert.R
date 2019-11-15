@@ -63,7 +63,7 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
 
     }
     # Save current task to insert before
-    insert_before <- slice(tasks, min + midpoint)
+    insert_before <- slice(tasks, max)
 
   }
 
