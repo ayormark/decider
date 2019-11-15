@@ -31,6 +31,11 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
   # Select the column with the tasks
   tasks <- tasks %>% select(tasks_column)
 
+  last_task <- enframe("Last Task", name = NULL)
+  colnames(last_task) <- tasks_column
+
+  tasks <- bind_rows(tasks, last_task)
+
   # Save max and min values for bisection
   max <- nrow(tasks)
   min <- 0
