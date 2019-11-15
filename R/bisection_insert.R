@@ -42,13 +42,14 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
 
   # Continue bisecting until place in list is found
   while (max - min > 1) {
-    cat(paste0("range = ", max-min, "\n"))
-    cat(paste0("max = ", max, "\n"))
-    cat(paste0("min = ", min, "\n"))
+    # For mathematical troubleshooting help
+    # cat(paste0("range = ", max-min, "\n"))
+    # cat(paste0("max = ", max, "\n"))
+    # cat(paste0("min = ", min, "\n"))
 
     # Find midpoint of the relevant section of the task list
     midpoint <- (max-min)/2
-    cat(paste0("midpoint = ", midpoint, "\n"))
+    # cat(paste0("midpoint = ", midpoint, "\n"))
 
     # Select the task at the midpoint
     midpoint_task <- slice(tasks, min + round(midpoint))
