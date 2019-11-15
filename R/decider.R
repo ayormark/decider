@@ -42,6 +42,13 @@
 # The need to re-rate aspects of specific items should be eliminated
 # Create a way for a single new item or small set of new items to be
   # efficiently inserted into an already-sorted list. bisection insert?
+# Account for time it will take to complete task
+# Account for Boomerang Y/N
+# Account for "flight time" of boomerang
+# When figuring out the relationship between prioritization and other metrics,
+  # Use machine learning to figure out how to reprioritize
+# Test out new metrics and measure how accurately they contribute to correct
+  # Prioritization ordering, A/B test these questions until they're ideal
 # Account for task size? Extra Large task, Large Task, Medium, etc.
 
 ######### Documentation #######################################################

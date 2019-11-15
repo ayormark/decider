@@ -2,7 +2,7 @@
 % Please edit documentation in R/bisection_insert.R
 \name{bisection_insert}
 \alias{bisection_insert}
-\title{Insert a single task efficiently into an already-sorted list}
+\title{Insert A Single Task Efficiently Into An Already-Sorted List}
 \usage{
 bisection_insert(task, tasks, tasks_column = "Task")
 }
@@ -14,7 +14,7 @@ bisection_insert(task, tasks, tasks_column = "Task")
 \item{tasks_column}{The column name of the tasks within the presorted list}
 }
 \description{
-Insert a single task efficiently into an already-sorted list
+Insert A Single Task Efficiently Into An Already-Sorted List
 }
 \examples{
 task <- "Fix the roof"

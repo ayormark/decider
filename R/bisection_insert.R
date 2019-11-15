@@ -4,7 +4,7 @@
 
 ######### Documentation #######################################################
 
-#' Insert a single task efficiently into an already-sorted list
+#' Insert A Single Task Efficiently Into An Already-Sorted List
 #' @param task The tast to be sorted, a character
 #' @param tasks The presorted list, a tibble
 #' @param tasks_column The column name of the tasks within the presorted list
@@ -31,6 +31,7 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
   # Select the column with the tasks
   tasks <- tasks %>% select(tasks_column)
 
+  # Add an additional task in the event the new task should be last
   last_task <- enframe("Last Task", name = NULL)
   colnames(last_task) <- tasks_column
 
