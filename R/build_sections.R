@@ -4,15 +4,19 @@
 
 ######### Documentation #######################################################
 
-#' Gets tasks from a project in Asana
+#' Create new sections in a project in Asana
 #' @param sections A vector of new section titles to be added to the
-#' project, in order. If a section already exists it will not create duplicates
+#' project, in order. If a section already exists it will not be duplicated.
 #' @param project_gid The gid identifier for a specific project in Asana,
 #' @export
 #' @examples
 #' project_gid <- "1234567891011121"
 #' sections <- c("Do", "Delegate", "Schedule")
 #' build_sections(sections, project_gid)
+#'
+#' @import tidyverse
+#'
+#' @remotes asana
 
 ######### Function ########################################################
 
@@ -21,7 +25,7 @@
 # library(dplyr)
 
 build_sections <-
-  function(sections, project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")) {
+  function(sections, project_gid) {
 
     # Get list of sections that currently exist in the project
     current_sections <-

@@ -26,6 +26,9 @@
 #### Future Goals ####
 
 # Automatically rearrange tasks in asana
+# Account for whether or not the task boomerangs and how long it's loop is
+# If the task is very quick, but the boomerang loop is long, then it should
+  # be done sooner to "get the ball rolling"- have the task running on its own
 # Automatically create Sections in asana list
   # Delegate, Do Now, Schedule
   # Bins
@@ -152,7 +155,7 @@ decider <- function(input_type = "asana",
 
   #### compare function ####
   # A function to choose which of two options is more important
-  # To be used within the quickSort() function
+  # To be used within the quickSort() and bisection_insert() function
   # Output is either -1 or 1, similar output to greaterThan() from rje
   source(paste0(getwd(), "/R/compare.R"))
 
