@@ -9,7 +9,7 @@ bisection_insert(task, tasks, tasks_column = "Task")
 \arguments{
 \item{task}{The tast to be sorted, a character}
 
-\item{tasks}{The pre-sorted list, a tibble}
+\item{tasks}{The presorted list, a tibble}
 
 \item{tasks_column}{The column name of the tasks within the presorted list}
 }

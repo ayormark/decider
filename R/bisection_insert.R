@@ -6,7 +6,7 @@
 
 #' Insert a single task efficiently into an already-sorted list
 #' @param task The tast to be sorted, a character
-#' @param tasks The pre-sorted list, a tibble
+#' @param tasks The presorted list, a tibble
 #' @param tasks_column The column name of the tasks within the presorted list
 #' @export
 
@@ -37,35 +37,40 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
 
   # Continue bisecting until place in list is found
   while (max - min > 1) {
-    cat(max-min)
+    cat(paste0("range = ", max-min, "\n"))
+    cat(paste0("max = ", max, "\n"))
+    cat(paste0("min = ", min, "\n"))
 
     # Find midpoint of the relevant section of the task list
     midpoint <- round((max-min)/2)
+    cat(paste0("midpoint = ", midpoint, "\n"))
 
     # Select the task at the midpoint
-    midpoint_task <- slice(tasks, midpoint)
+    midpoint_task <- slice(tasks, min + midpoint)
 
     # Compare the new task with the midpoint task
     comparison_val <- compare(task, midpoint_task)
 
-    # Move task up in completion order
+    # Move task down in completion order
     if (comparison_val == -1) {
-
-      min <- min + round((max-min)/2)
-
-      # Move task down in completion order
-    } else if (comparison_val == 1) {
-
 
       max <- max - round((max-min)/2)
 
+      # Move task up in completion order
+    } else if (comparison_val == 1) {
+
+      min <- min + round((max-min)/2)
+
     }
     # Save current task to insert before
-    insert_before <- slice(tasks, midpoint)
+    insert_before <- slice(tasks, min + midpoint)
 
   }
 
   # Return value after bisection converges on a task
+  cat(paste0("range = ", max-min, "\n"))
+  cat(paste0("max = ", max, "\n"))
+  cat(paste0("min = ", min, "\n"))
   return(insert_before)
 
 }
