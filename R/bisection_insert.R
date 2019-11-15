@@ -42,11 +42,11 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
     cat(paste0("min = ", min, "\n"))
 
     # Find midpoint of the relevant section of the task list
-    midpoint <- round((max-min)/2)
+    midpoint <- (max-min)/2
     cat(paste0("midpoint = ", midpoint, "\n"))
 
     # Select the task at the midpoint
-    midpoint_task <- slice(tasks, min + midpoint)
+    midpoint_task <- slice(tasks, min + round(midpoint))
 
     # Compare the new task with the midpoint task
     comparison_val <- compare(task, midpoint_task)
@@ -54,16 +54,16 @@ bisection_insert <- function (task, tasks, tasks_column = "Task") {
     # Move task down in completion order
     if (comparison_val == -1) {
 
-      max <- max - round((max-min)/2)
+      max <- max - (max-min)/2
 
       # Move task up in completion order
     } else if (comparison_val == 1) {
 
-      min <- min + round((max-min)/2)
+      min <- min + (max-min)/2
 
     }
     # Save current task to insert before
-    insert_before <- slice(tasks, max)
+    insert_before <- slice(tasks, round(max))
 
   }
 
