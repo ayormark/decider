@@ -37,9 +37,11 @@
 # Modifications need to be made to account for a todo item becoming
   # more urgent as time passes
 # It may be safe to say that Importance remains constant, but Urgency changes
+# If a task is a dependency of another higher-ranked task, then that task
+  # takes on the ranking of its parent task
 # The need to re-rate aspects of specific items should be eliminated
 # Create a way for a single new item or small set of new items to be
-  # efficiently inserted into an already-sorted list (append()?)
+  # efficiently inserted into an already-sorted list. bisection insert?
 # Account for task size? Extra Large task, Large Task, Medium, etc.
 
 ######### Documentation #######################################################
