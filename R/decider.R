@@ -14,6 +14,8 @@
 # https://www.simplypsychology.org/likert-scale.html
 # Quick Sort
 # https://www.youtube.com/watch?v=WaNLJf8xzC4
+# Binary Search Algorithm
+# https://en.wikipedia.org/wiki/Binary_search_algorithm
 
 # After importing the to do list, each task is then rated from 1-5 on both
 # Urgency and Importance. These make up 25 "bins"
@@ -46,7 +48,8 @@
 # Account for Boomerang Y/N
 # Account for "flight time" of boomerang
 # When figuring out the relationship between prioritization and other metrics,
-  # Use machine learning to figure out how to reprioritize
+  # Use supervised machine learning (regression) to figure out how to
+  # reprioritize
 # Test out new metrics and measure how accurately they contribute to correct
   # Prioritization ordering, A/B test these questions until they're ideal
 # Account for task size? Extra Large task, Large Task, Medium, etc.
@@ -386,7 +389,7 @@ decider <- function(input_type = "asana",
         # Only state that ordering is completed if more than 1 task in process
         cat(green("You have ordered all ",
                   bin$Urgency_str[[1]], " & ", bin$Importance_str[[1]],
-                  " (", bin$Composite[[1]], ")" ," tasks!",
+                  " ( rank: ", bin$Composite[[1]], ")" ," tasks!",
                   "\n\n", sep = ""))
 
         wait_for_key("c")
