@@ -124,7 +124,7 @@ decider <- function(input_type = "asana",
 
     source(paste0(getwd(), "/R/asana_import.R"))
 
-    data <- asana_import(project_gid = asana_project_gid)
+    data <- asana_import(project_gid = asana_project_gid, shuffle = TRUE)
 
     todo <- data[[1]]
     prerated_todo <- data[[2]]
