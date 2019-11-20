@@ -27,32 +27,8 @@
 
 #### Future Goals ####
 
-# Automatically rearrange tasks in asana
-# Account for whether or not the task boomerangs and how long it's loop is
-# If the task is very quick, but the boomerang loop is long, then it should
-  # be done sooner to "get the ball rolling"- have the task running on its own
-# Automatically create Sections in asana list
-  # Delegate, Do Now, Schedule
-  # Bins
-# Use a tool like mechanical turk to determine the actual order in which EUEI
-  # bins should be completed
-# Modifications need to be made to account for a todo item becoming
-  # more urgent as time passes
-# It may be safe to say that Importance remains constant, but Urgency changes
-# If a task is a dependency of another higher-ranked task, then that task
-  # takes on the ranking of its parent task
-# The need to re-rate aspects of specific items should be eliminated
-# Create a way for a single new item or small set of new items to be
-  # efficiently inserted into an already-sorted list. bisection insert?
-# Account for time it will take to complete task
-# Account for Boomerang Y/N
-# Account for "flight time" of boomerang
-# When figuring out the relationship between prioritization and other metrics,
-  # Use supervised machine learning (regression) to figure out how to
-  # reprioritize
-# Test out new metrics and measure how accurately they contribute to correct
-  # Prioritization ordering, A/B test these questions until they're ideal
-# Account for task size? Extra Large task, Large Task, Medium, etc.
+# See Decider Asana Project Board:
+# https://app.asana.com/0/1150093110780593/board
 
 ######### Documentation #######################################################
 
