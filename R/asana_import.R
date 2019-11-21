@@ -76,10 +76,12 @@ asana_import <- function(
     prerated_todo <- tibble(gid = NA, Task = NA) %>% filter(!is.na(gid)) %>%
       mutate(gid = as.character(gid))
   }
-  output <- list(todo, prerated_todo)
+
   if (shuffle == T) {
-    output <- output %>% sample_n(nrow(output))
+    todo <- todo %>% sample_n(nrow(todo))
   }
+
+  output <- list(todo, prerated_todo)
   return(output)
 }
 

@@ -6,7 +6,7 @@
 \usage{
 asana_import(ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"),
   project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
-  board_column = NA, section = NA)
+  board_column = NA, section = NA, shuffle = FALSE)
 }
 \arguments{
 \item{ASANA_ACCESS_TOKEN}{An Asana access token.
