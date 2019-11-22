@@ -10,6 +10,10 @@
 #' https://asana.com/guide/help/api/api#gl-access-tokens
 #' @param project_gid The gid identifier for a specific project in Asana,
 #' found in the URL
+#' @param board_column If importing from an Asana project in board view,
+#' specify the column that you would like to import and sort
+#' @param section If importing from an Asana project in list view,
+#' specify a section that you would like to import and sort
 #' @export
 #' @details Follow the instructions for the asana package to make usage easier
 #' https://github.com/datacamp/asana/blob/master/README.md
@@ -23,10 +27,11 @@
 asana_import <- function(
 # see https://github.com/datacamp/asana for information on these inputs
   ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"),
-  project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")) {
+  project_gid,
+  board_column = NA, section = NA, shuffle = FALSE) {
 
   # ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
-  # project_gid <- Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
+  # project_gid <- Sys.getenv("ASANA_PROJECT_ID")
   endpoint <- paste0("projects/", project_gid, "/tasks")
 
   # Functions for Asana Tasks:
@@ -36,7 +41,7 @@ asana_import <- function(
   # response <- call_asana_api(endpoint, ASANA_ACCESS_TOKEN) %>% as_tibble()
   # response_data <- response$data %>% as_tibble
 
-  # Get tibble of not-yet-completed mytasks
+  # Get tibble of not-yet-completed tasks
   todo <- asn_tasks_find_by_project(project_gid,
                                     completed_since = "now")
 
@@ -71,6 +76,11 @@ asana_import <- function(
     prerated_todo <- tibble(gid = NA, Task = NA) %>% filter(!is.na(gid)) %>%
       mutate(gid = as.character(gid))
   }
+
+  if (shuffle == T) {
+    todo <- todo %>% sample_n(nrow(todo))
+  }
+
   output <- list(todo, prerated_todo)
   return(output)
 }

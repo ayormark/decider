@@ -27,32 +27,8 @@
 
 #### Future Goals ####
 
-# Automatically rearrange tasks in asana
-# Account for whether or not the task boomerangs and how long it's loop is
-# If the task is very quick, but the boomerang loop is long, then it should
-  # be done sooner to "get the ball rolling"- have the task running on its own
-# Automatically create Sections in asana list
-  # Delegate, Do Now, Schedule
-  # Bins
-# Use a tool like mechanical turk to determine the actual order in which EUEI
-  # bins should be completed
-# Modifications need to be made to account for a todo item becoming
-  # more urgent as time passes
-# It may be safe to say that Importance remains constant, but Urgency changes
-# If a task is a dependency of another higher-ranked task, then that task
-  # takes on the ranking of its parent task
-# The need to re-rate aspects of specific items should be eliminated
-# Create a way for a single new item or small set of new items to be
-  # efficiently inserted into an already-sorted list. bisection insert?
-# Account for time it will take to complete task
-# Account for Boomerang Y/N
-# Account for "flight time" of boomerang
-# When figuring out the relationship between prioritization and other metrics,
-  # Use supervised machine learning (regression) to figure out how to
-  # reprioritize
-# Test out new metrics and measure how accurately they contribute to correct
-  # Prioritization ordering, A/B test these questions until they're ideal
-# Account for task size? Extra Large task, Large Task, Medium, etc.
+# See Decider Asana Project Board:
+# https://app.asana.com/0/1150093110780593/board
 
 ######### Documentation #######################################################
 
@@ -90,7 +66,7 @@
 #' decider(
 #' input_type = "asana",
 #' asana_project_gid = "123456789101112,
-#' asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+#' asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #' csv_task_column_name = "Task",
 #' testing_task_num = 4)
 
@@ -110,7 +86,7 @@
 ########## Decider Function ###################################################
 
 decider <- function(input_type = "asana",
-                    asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+                    asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
                     run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = "Task",
@@ -148,7 +124,7 @@ decider <- function(input_type = "asana",
 
     source(paste0(getwd(), "/R/asana_import.R"))
 
-    data <- asana_import(project_gid = asana_project_gid)
+    data <- asana_import(project_gid = asana_project_gid, shuffle = TRUE)
 
     todo <- data[[1]]
     prerated_todo <- data[[2]]
@@ -177,6 +153,11 @@ decider <- function(input_type = "asana",
 
   #### Use GUI with shiny ####
   source(paste0(getwd(), "/R/run_shiny.R"))
+
+
+  #### Move a task in reference to another task within a project
+  source(paste0(getwd(), "/R/asana_move_task.R"))
+
 
   ######### Shiny ###############################################################
   if (run_shiny == TRUE) {
@@ -328,23 +309,23 @@ decider <- function(input_type = "asana",
     "EUSI" = list("EUSI", "Delegate if Possible"),
     "MUEI" = list("MUEI", "Delegate if Possible"),
     "VUMI" = list("VUMI", "Delegate if Possible"),
-    "SUEI" = list("SUEI", "Schedule"),
+    # "SUEI" = list("SUEI", "Schedule"),
     "EUNI" = list("EUNI", "Delegate if Possible"),
     "MUVI" = list("MUVI", "Delegate if Possible"),
     "VUSI" = list("VUSI", "Delegate if Possible"),
-    "SUVI" = list("SUVI", "Schedule"),
+    # "SUVI" = list("SUVI", "Schedule"),
     "SUEI" = list("SUEI", "Delegate if Possible"), # again, after scheduling
     "MUMI" = list("MUMI", "Delegate if Possible"),
-    "NUEI" = list("NUEI", "Schedule"),
+    # "NUEI" = list("NUEI", "Schedule"),
     "VUNI" = list("VUNI", "Delegate if Possible"),
-    "SUMI" = list("SUMI", "Schedule"),
+    # "SUMI" = list("SUMI", "Schedule"),
     "SUVI" = list("SUVI", "Delegate if Possible"), # again, after scheduling
     "MUSI" = list("MUSI", "Delegate if Possible"),
-    "NUVI" = list("NUVI", "Schedule"),
+    # "NUVI" = list("NUVI", "Schedule"),
     "NEUI" = list("NUEI", "Delegate if Possible"), # again, after scheduling
     "SUMI" = list("SUMI", "Delegate if Possible"), # again, after scheduling
     "MUNI" = list("MUNI", "Delegate if Possible"),
-    "NUMI" = list("NUMI", "Schedule"),
+    # "NUMI" = list("NUMI", "Schedule"),
     "NUVI" = list("NUVI", "Delegate if Possible"), # again, after scheduling
     "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
     "NUMI" = list("NUMI", "Delegate if Possible"), # again, after scheduling
@@ -436,7 +417,7 @@ decider <- function(input_type = "asana",
 # decider(input_type = "asana",
 #         # An Asana project to test with "Test Project" gid: 1148823248153567
 #         asana_project_gid = "1148823248153567",
-#         # asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+#         # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #         # run_shiny = FALSE,
 #         # csv_path,
 #         # csv_task_column_name = "Task",

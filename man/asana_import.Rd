@@ -5,7 +5,8 @@
 \title{Gets tasks from a project in Asana}
 \usage{
 asana_import(ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"),
-  project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"))
+  project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+  board_column = NA, section = NA, shuffle = FALSE)
 }
 \arguments{
 \item{ASANA_ACCESS_TOKEN}{An Asana access token.
@@ -14,6 +15,12 @@ https://asana.com/guide/help/api/api#gl-access-tokens}
 
 \item{project_gid}{The gid identifier for a specific project in Asana,
 found in the URL}
+
+\item{board_column}{If importing from an Asana project in board view,
+specify the column that you would like to import and sort}
+
+\item{section}{If importing from an Asana project in list view,
+specify a section that you would like to import and sort}
 }
 \description{
 Gets tasks from a project in Asana
