@@ -66,7 +66,7 @@
 #' decider(
 #' input_type = "asana",
 #' asana_project_gid = "123456789101112,
-#' asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+#' asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #' csv_task_column_name = "Task",
 #' testing_task_num = 4)
 
@@ -86,7 +86,7 @@
 ########## Decider Function ###################################################
 
 decider <- function(input_type = "asana",
-                    asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+                    asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
                     run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = "Task",
@@ -417,7 +417,7 @@ decider <- function(input_type = "asana",
 # decider(input_type = "asana",
 #         # An Asana project to test with "Test Project" gid: 1148823248153567
 #         asana_project_gid = "1148823248153567",
-#         # asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+#         # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #         # run_shiny = FALSE,
 #         # csv_path,
 #         # csv_task_column_name = "Task",

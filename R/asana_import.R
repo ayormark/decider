@@ -27,11 +27,11 @@
 asana_import <- function(
 # see https://github.com/datacamp/asana for information on these inputs
   ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"),
-  project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+  project_gid,
   board_column = NA, section = NA, shuffle = FALSE) {
 
   # ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
-  # project_gid <- Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
+  # project_gid <- Sys.getenv("ASANA_PROJECT_ID")
   endpoint <- paste0("projects/", project_gid, "/tasks")
 
   # Functions for Asana Tasks:
@@ -41,7 +41,7 @@ asana_import <- function(
   # response <- call_asana_api(endpoint, ASANA_ACCESS_TOKEN) %>% as_tibble()
   # response_data <- response$data %>% as_tibble
 
-  # Get tibble of not-yet-completed mytasks
+  # Get tibble of not-yet-completed tasks
   todo <- asn_tasks_find_by_project(project_gid,
                                     completed_since = "now")
 
