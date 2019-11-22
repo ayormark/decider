@@ -154,6 +154,11 @@ decider <- function(input_type = "asana",
   #### Use GUI with shiny ####
   source(paste0(getwd(), "/R/run_shiny.R"))
 
+
+  #### Move a task in reference to another task within a project
+  source(paste0(getwd(), "/R/asana_move_task.R"))
+
+
   ######### Shiny ###############################################################
   if (run_shiny == TRUE) {
 
