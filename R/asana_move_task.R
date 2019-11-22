@@ -28,13 +28,13 @@ asana_move_task <- function (
   project,
   ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN")) {
 
-  task_to_move <- "1148844364427354"
-
-  insert_before <- "1148825278352627"
-
-  project <- "1148823248153567"
-
-  ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
+  # task_to_move <- "1148844364427354"
+  #
+  # insert_before <- "1148825278352627"
+  #
+  # project <- "1148823248153567"
+  #
+  # ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
 
   endpoint1 <- "https://app.asana.com/api/1.0/tasks/"
   endpoint2 <- "/addProject"
