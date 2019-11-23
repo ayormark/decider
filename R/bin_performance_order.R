@@ -50,7 +50,7 @@ bin_performance_order <- function (urgency_bias = 1.4,
     stop("Urgency Bias can't be below 0")
   }
   if (urgency_bias > 4) {
-    warning("Urgency Biases above 4 do not alter results")
+    warning(paste0("An Urgency Biases above _", bin_u_max-1, "_ will not alter results"))
   }
 
 
