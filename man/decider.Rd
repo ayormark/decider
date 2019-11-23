@@ -14,7 +14,9 @@ decider(input_type = "asana",
 Can be "asana" or "csv"}
 
 \item{asana_project_gid}{The global identifier for an asana project.
-Can usually be found in the project URL.}
+Can usually be found in the project URL. Defaults to "ASANA_PROJECT_ID"
+in .renviron. If set to "mytasks" will be set to
+"ASANA_MYTASKS_PROJECT_ID" in .renviron}
 
 \item{run_shiny}{Choose whether to run the GUI for decider}
 
