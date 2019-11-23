@@ -5,8 +5,7 @@
 \title{Gets tasks from a project in Asana}
 \usage{
 asana_import(ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"),
-  project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
-  board_column = NA, section = NA, shuffle = FALSE)
+  project_gid, board_column = NA, section = NA, shuffle = FALSE)
 }
 \arguments{
 \item{ASANA_ACCESS_TOKEN}{An Asana access token.

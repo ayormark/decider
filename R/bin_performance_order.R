@@ -50,7 +50,7 @@ bin_performance_order <- function (urgency_bias = 1.4,
     stop("Urgency Bias can't be below 0")
   }
   if (urgency_bias > 4) {
-    warning("Urgency Biases above 4 do not alter results")
+    warning(paste0("An Urgency Biases above _", bin_i_max - 1, "_ will not alter results"))
   }
 
 
@@ -87,7 +87,11 @@ bin_performance_order <- function (urgency_bias = 1.4,
 
   }
 
-  ui_rankings <- ui_rankings %>% arrange(by = distance_rank)
+  ui_rankings <- ui_rankings %>% arrange(by = distance_rank) %>%
+    # Add generalized_score to help with intuition on value of tasks in a bin
+    mutate(generalized_score = seq.int(1, nrow(ui_rankings))) %>%
+    # Remove distance_rank because it is unintuitive
+    select(-distance_rank)
 
   # a lower rank means it should be done sooner
   return(ui_rankings)

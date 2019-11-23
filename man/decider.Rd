@@ -5,7 +5,7 @@
 \title{Decide What To Do And When To Do It}
 \usage{
 decider(input_type = "asana",
-  asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID"),
+  asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
   run_shiny = FALSE, csv_path, csv_task_column_name = "Task",
   testing_task_num = NA)
 }

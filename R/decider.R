@@ -92,6 +92,11 @@ decider <- function(input_type = "asana",
                     csv_task_column_name = "Task",
                     testing_task_num = NA) {
 
+  input_type = "asana"
+  asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  run_shiny = FALSE
+  testing_task_num = NA
+
   # setwd("~/Google Drive/Personal/R/decider")
 
   # Choose whether to import csv or connect with Asana API
@@ -194,8 +199,8 @@ decider <- function(input_type = "asana",
 
   # Tasks to Test with
   # When testing, you may select a subset of tasks to reduce testing time
-  print(testing_task_num)
-  print(nrow(todo))
+  # print(testing_task_num)
+  # print(nrow(todo))
 
 # If there is a testing number, sample that many tasks from todo list
   if (!is.na(testing_task_num)) {
@@ -235,9 +240,6 @@ decider <- function(input_type = "asana",
 
   # Merge ratings back into original list
   todo <- full_join(ratings, todo, by = "Task")
-
-  # Add composite score for user to gain an intuitive sense of task value
-  todo <- todo %>% mutate(Composite = 4 * Urgency * Importance)
 
   # Order by most recently rated
   todo <- todo %>% arrange(-as.numeric(Date_Recorded))
@@ -300,39 +302,50 @@ decider <- function(input_type = "asana",
   # https://docs.google.com/drawings/d/1XWlp9sYhuP-iULGH5so0Q9qumT0z1by
   # hWzqo9fzRe7g/preview
 
-  do_order <- list(
-    "EUEI" = list("EUEI", "Delegate if Possible"),
-    "EUVI" = list("EUVI", "Delegate if Possible"),
-    "VUEI" = list("VUEI", "Delegate if Possible"),
-    "EUMI" = list("EUMI", "Delegate if Possible"),
-    "VUVI" = list("VUVI", "Delegate if Possible"),
-    "EUSI" = list("EUSI", "Delegate if Possible"),
-    "MUEI" = list("MUEI", "Delegate if Possible"),
-    "VUMI" = list("VUMI", "Delegate if Possible"),
-    # "SUEI" = list("SUEI", "Schedule"),
-    "EUNI" = list("EUNI", "Delegate if Possible"),
-    "MUVI" = list("MUVI", "Delegate if Possible"),
-    "VUSI" = list("VUSI", "Delegate if Possible"),
-    # "SUVI" = list("SUVI", "Schedule"),
-    "SUEI" = list("SUEI", "Delegate if Possible"), # again, after scheduling
-    "MUMI" = list("MUMI", "Delegate if Possible"),
-    # "NUEI" = list("NUEI", "Schedule"),
-    "VUNI" = list("VUNI", "Delegate if Possible"),
-    # "SUMI" = list("SUMI", "Schedule"),
-    "SUVI" = list("SUVI", "Delegate if Possible"), # again, after scheduling
-    "MUSI" = list("MUSI", "Delegate if Possible"),
-    # "NUVI" = list("NUVI", "Schedule"),
-    "NEUI" = list("NUEI", "Delegate if Possible"), # again, after scheduling
-    "SUMI" = list("SUMI", "Delegate if Possible"), # again, after scheduling
-    "MUNI" = list("MUNI", "Delegate if Possible"),
-    # "NUMI" = list("NUMI", "Schedule"),
-    "NUVI" = list("NUVI", "Delegate if Possible"), # again, after scheduling
-    "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
-    "NUMI" = list("NUMI", "Delegate if Possible"), # again, after scheduling
-    "SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
-    "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
-    "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
+  # do_order <- list(
+  #   "EUEI" = list("EUEI", "Delegate if Possible"),
+  #   "EUVI" = list("EUVI", "Delegate if Possible"),
+  #   "VUEI" = list("VUEI", "Delegate if Possible"),
+  #   "EUMI" = list("EUMI", "Delegate if Possible"),
+  #   "VUVI" = list("VUVI", "Delegate if Possible"),
+  #   "EUSI" = list("EUSI", "Delegate if Possible"),
+  #   "MUEI" = list("MUEI", "Delegate if Possible"),
+  #   "VUMI" = list("VUMI", "Delegate if Possible"),
+  #   # "SUEI" = list("SUEI", "Schedule"),
+  #   "EUNI" = list("EUNI", "Delegate if Possible"),
+  #   "MUVI" = list("MUVI", "Delegate if Possible"),
+  #   "VUSI" = list("VUSI", "Delegate if Possible"),
+  #   # "SUVI" = list("SUVI", "Schedule"),
+  #   "SUEI" = list("SUEI", "Delegate if Possible"), # again, after scheduling
+  #   "MUMI" = list("MUMI", "Delegate if Possible"),
+  #   # "NUEI" = list("NUEI", "Schedule"),
+  #   "VUNI" = list("VUNI", "Delegate if Possible"),
+  #   # "SUMI" = list("SUMI", "Schedule"),
+  #   "SUVI" = list("SUVI", "Delegate if Possible"), # again, after scheduling
+  #   "MUSI" = list("MUSI", "Delegate if Possible"),
+  #   # "NUVI" = list("NUVI", "Schedule"),
+  #   "NEUI" = list("NUEI", "Delegate if Possible"), # again, after scheduling
+  #   "SUMI" = list("SUMI", "Delegate if Possible"), # again, after scheduling
+  #   "MUNI" = list("MUNI", "Delegate if Possible"),
+  #   # "NUMI" = list("NUMI", "Schedule"),
+  #   "NUVI" = list("NUVI", "Delegate if Possible"), # again, after scheduling
+  #   "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
+  #   "NUMI" = list("NUMI", "Delegate if Possible"), # again, after scheduling
+  #   "SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
+  #   "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
+  #   "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
 
+  source(paste0(getwd(), "/R/bin_performance_order.R"))
+
+  bin_performance_order <- bin_performance_order(urgency_bias = 1.4) %>%
+    rename(Urgency = u, Importance = i)
+
+  num_possible_bins <- nrow(bin_performance_order)
+
+  todo <- todo %>%
+    left_join(bin_performance_order, by=c("Urgency","Importance"))
+
+  todo <- todo %>% arrange(by = generalized_score)
 
   ######### Reorder in Asana - Rough ##########################################
 
@@ -343,21 +356,29 @@ decider <- function(input_type = "asana",
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
 
-  # Go through each EUEI bin in pre-determined order
-  for (i in 1:length(do_order)) {
+  # Get a tibble of the unique details of each bin that contains tasks
+  euei_bins <- todo %>%
+    select(generalized_score, EUEI, Urgency_str, Importance_str) %>%
+    unique() %>% arrange(generalized_score)
 
-    # Set abbrev to ith entry in do_order
-    abbrev <- do_order %>% names %>% .[[i]]
+  # Go through each EUEI bin in order
+  for (i in 1:nrow(euei_bins)) {
 
-    # Filter todo list by most pressing EUEI bin
+    # Set abbrev to ith entry in euei_bins
+    abbrev <- euei_bins[i,] %>% .$EUEI
+
+    # Get all tasks that are in the current euei bin
     bin <- todo %>% filter(EUEI == abbrev)
 
     # Display Green Message prompt when moving to the next EUEI bin
     if (nrow(bin) > 0) {
       cat(green(abbrev, " Tasks: ",
-                # Show Composite score, 1-100 to help intuition
-                "(Scored: ", bin$Composite[[1]], "/100) ",
-                bin$Urgency_str[[1]], " & ", bin$Importance_str[[1]],
+                # Show generalized_score to help intuition
+                "(Scored: ", bin$generalized_score[[1]], "/",
+                num_possible_bins, ") ",
+                bin$Urgency_str[[1]],
+                " & ",
+                bin$Importance_str[[1]],
                 sep = ""), "\n\n")
 
       # Perform quicksort for all tasks in this bin
@@ -369,8 +390,12 @@ decider <- function(input_type = "asana",
       if (nrow(bin) > 1) {
         # Only state that ordering is completed if more than 1 task in process
         cat(green("You have ordered all ",
-                  bin$Urgency_str[[1]], " & ", bin$Importance_str[[1]],
-                  " ( rank: ", bin$Composite[[1]], ")" ," tasks!",
+                  bin$Urgency_str[[1]],
+                  " & ",
+                  bin$Importance_str[[1]],
+                  " (Scored: ", bin$generalized_score[[1]], "/",
+                  num_possible_bins, ") ",
+                  " tasks!",
                   "\n\n", sep = ""))
 
         wait_for_key("c")
@@ -381,11 +406,11 @@ decider <- function(input_type = "asana",
       for (task in bin$Task) {
 
         # Display suggested action based on EUEI, e.g. "Delegate if Possible"
-        if (do_order[[i]][[2]] == "Schedule") {
-          cat(red("Do not do yet, just schedule:\n"))
-        } else {
-          cat(green(do_order[[abbrev]][[2]]), "\n")
-        }
+        # if (do_order[[i]][[2]] == "Schedule") {
+        #   cat(red("Do not do yet, just schedule:\n"))
+        # } else {
+        #   cat(green(do_order[[abbrev]][[2]]), "\n")
+        # }
 
 
         # Display menu to choose what kind of action has been taken
