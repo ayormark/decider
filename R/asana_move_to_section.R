@@ -29,22 +29,23 @@ asana_move_to_section <- function (
 
   # task_to_move <- "1148844364427354"
   #
-  # section <- "1148825278352627"
+  # section <- "1150999038969028"
   #
   # project <- "1148823248153567"
   #
   # ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
 
-  endpoint1 <- "https://app.asana.com/api/1.0/tasks/"
-  endpoint2 <- "/addProject"
 
-  endpoint <- paste0(endpoint1, task_to_move, endpoint2)
+  endpoint1 <- "https://app.asana.com/api/1.0/sections/"
+  endpoint2 <- "/addTask"
+
+  endpoint <- paste0(endpoint1, section, endpoint2)
 
   Authorization <- paste0("Bearer ", ASANA_ACCESS_TOKEN)
 
   POST(
     endpoint,
-    body = list(section = section,
+    body = list(task = task_to_move,
                 project = project),
     add_headers(Authorization = Authorization)
   )
