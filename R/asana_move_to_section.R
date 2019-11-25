@@ -4,7 +4,7 @@
 
 ######### Documentation #######################################################
 
-#' Move A Task Within A Project Relative To Other Tasks
+#' Move A Task To a Specific Section Within A Project
 #' @param task_to_move The gid of the task that you want to move
 #' @param section The gid of the section that you would like to place a task in
 #' @param project The project gid
