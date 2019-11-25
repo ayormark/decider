@@ -51,7 +51,7 @@
 #' https://www.youtube.com/watch?v=WaNLJf8xzC4
 #' @param input_type The method to import tasks into decider.
 #' Can be "asana" or "csv"
-#' @param asana_project_gid The global identifier for an asana project.
+#' @param project_gid The global identifier for an asana project.
 #' Can usually be found in the project URL. Defaults to "ASANA_PROJECT_ID"
 #' in .renviron. If set to "mytasks" will be set to
 #' "ASANA_MYTASKS_PROJECT_ID" in .renviron
@@ -67,8 +67,8 @@
 #' @examples
 #' decider(
 #' input_type = "asana",
-#' asana_project_gid = "123456789101112,
-#' asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
+#' project_gid = "123456789101112,
+#' project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #' csv_task_column_name = "Task",
 #' testing_task_num = 4)
 
@@ -90,7 +90,7 @@
 ########## Decider Function ###################################################
 
 decider <- function(input_type = "asana",
-                    asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
+                    project_gid = Sys.getenv("ASANA_PROJECT_ID"),
                     run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = "Task",
@@ -98,20 +98,19 @@ decider <- function(input_type = "asana",
                     do_now = FALSE) {
 
   # input_type = "asana"
-  # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
-  # # asana_project_gid = "mytasks"
+  # project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  # project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
+  # # project_gid = "mytasks"
   # run_shiny = FALSE
   # testing_task_num = 5
 
-  if (asana_project_gid == "mytasks") {
-    asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
+  if (project_gid == "mytasks") {
+    project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
   }
 
-  # setwd("~/Google Drive/Personal/R/decider")
-
-  # If testing, select how many tasks to rank
-  # rm(testing_task_num)
-  # testing_task_num <- 4
+  if (project_gid == "test") {
+    project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  }
 
   ######### CSV Import ##########################################################
 
@@ -131,7 +130,7 @@ decider <- function(input_type = "asana",
 
     source(paste0(getwd(), "/R/asana_import.R"))
 
-    data <- asana_import(project_gid = asana_project_gid, shuffle = TRUE)
+    data <- asana_import(project_gid = project_gid, shuffle = TRUE)
 
     todo <- data[[1]]
     prerated_todo <- data[[2]]
@@ -331,23 +330,17 @@ decider <- function(input_type = "asana",
   }
 
   # Build Sections Tier 1, Tier 2, etc. in Asana
-  build_sections(tier_names, project_gid = asana_project_gid)
+  build_sections(tier_names, project_gid = project_gid)
 
   ######### Place in Tiers ####################################################
 
-  #### CONTINUE HERE ########################
-  ## You were working on getting task placement into sections to work
-  # for mytasks. It works for other projects. You were getting an Internal
-  # Server Error
-  #### CONTINUE HERE ########################
-
 # "932414416064709" is the mytasks gid
-  if (asana_project_gid != "932414416064709") { #REMOVE LATER
+  if (project_gid != "932414416064709") { #REMOVE LATER
 
     source(paste0(getwd(), "/R/asana_section_gids.R"))
 
     # Get the gids of each section within the project, excluding "(no section)"
-    tier_gids <- asana_section_gids(asana_project_gid, section_str = "Tier")
+    tier_gids <- asana_section_gids(project_gid, section_str = "Tier")
 
     # Move each task to the correct section
     for (i in 1:nrow(todo)) {
@@ -360,7 +353,7 @@ decider <- function(input_type = "asana",
 
       asana_move_to_section(task_to_move,
                             section = destined_tier_gid,
-                            project = asana_project_gid)
+                            project = project_gid)
 
     }
 
@@ -457,8 +450,8 @@ decider <- function(input_type = "asana",
 #
 # decider(input_type = "asana",
 #         # An Asana project to test with "Test Project" gid: 1148823248153567
-#         asana_project_gid = "1148823248153567",
-#         # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
+#         project_gid = "1148823248153567",
+#         # project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #         # run_shiny = FALSE,
 #         # csv_path,
 #         # csv_task_column_name = "Task",
