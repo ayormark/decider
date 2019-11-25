@@ -21,7 +21,15 @@
 
 asana_section_gids <- function (project,
                                 section_str = NA,
+                                include_no_section = FALSE,
                                 ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN")) {
+
+  # Test Project:
+  project <- "1148823248153567"
+  section_str <- "Tier"
+  ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
+  task_to_move <- "1148844364427354" # "useless thing" task
+  section <- "1151006716370421" # Tier 3 in Test Project
 
 
   # Get gid for each section within the project
@@ -40,10 +48,13 @@ asana_section_gids <- function (project,
     fromJSON() %>%
     as_tibble()
 
-  # Remove uneccesary list format
+  # Remove unneccesary list format
   section_gids <- section_gids$data %>%
     rename(section = name) %>%
     arrange(section) %>% filter()
+
+  no_section_gid <- section_gids %>%
+    filter(str_detect(section, "(no section)"))
 
   # Get gids of the sections that contain the text string only
   if (!is.na(section_str)) {
@@ -51,7 +62,11 @@ asana_section_gids <- function (project,
       filter(str_detect(section, section_str))
   }
 
-  # Get rid of unneeded column
+  if (include_no_section) {
+    section_gids <- bind_rows(no_section_gid, section_gids)
+  }
+
+  # Get rid of unneeded resource_type column
   section_gids <- section_gids %>% select(-resource_type)
 
   return(section_gids)
