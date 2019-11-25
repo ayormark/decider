@@ -78,6 +78,7 @@
 #' @import tidyverse
 #' @import rje
 #' @import stringr
+#' @import jsonlite
 #' @import shiny
 #' @import crayon
 #' @import httr
@@ -398,7 +399,10 @@ decider <- function(input_type = "asana",
 
   for (i in 1:nrow(todo)) {
 
-    asana_move_to_section()
+    asana_move_to_section(task_to_move,
+                          section = NULL,
+                          project = asana_project_gid)
+
 
   }
 

@@ -4,7 +4,7 @@
 
 ######### Documentation #######################################################
 
-#' Move A Task Within A Project Relative To Other Tasks
+#' Get A Tibble Of All Sections Within A Project And Their gids
 #' @param project The project gid
 #' @param section_str A character string contained within the section name(s)
 #' you'd like to return.
@@ -47,7 +47,8 @@ asana_section_gids <- function (project,
 
   # Get gids of the sections that contain the text string only
   if (!is.na(section_str)) {
-    section_gids %>% filter(str_detect(section, "Tier"))
+    section_gids <- section_gids %>%
+      filter(str_detect(section, section_str))
   }
 
   # Get rid of unneeded column
