@@ -99,10 +99,10 @@ decider <- function(input_type = "asana",
     asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
   }
 
-  # input_type = "asana"
-  # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
-  # run_shiny = FALSE
-  # testing_task_num = NA
+  input_type = "asana"
+  asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  run_shiny = FALSE
+  testing_task_num = NA
 
   # setwd("~/Google Drive/Personal/R/decider")
 
@@ -350,7 +350,6 @@ decider <- function(input_type = "asana",
   ######### Build Tier Sections in Asana ######################################
   # Create Tiered sections
   num_tiers <- 5 # Arbitrary number
-  bins_per_tier <- (nrow(bin_performance_order) / num_tiers) %>% round
 
   tier_names <- c()
   for (i in 1:num_tiers) {
@@ -362,7 +361,10 @@ decider <- function(input_type = "asana",
 
   ######### Reorder in Asana - Rough ##########################################
 
+  bins_per_tier <- nrow(bin_performance_order) / num_tiers %>% ceiling
 
+  bin_performance_order %>%
+    mutate(Tier = (generalized_score / bins_per_tier) %>% ceiling)
 
   # (Future Plan)
 
@@ -371,9 +373,9 @@ decider <- function(input_type = "asana",
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
 
-  # Get a tibble of the unique details of all bins that contains tasks
+  # Get a tibble of the unique details of all current bins that contain tasks
   euei_bins <- todo %>%
-    select(generalized_score, EUEI, Urgency_str, Importance_str) %>%
+    select(EUEI, Urgency_str, Importance_str, generalized_score) %>%
     unique() %>% arrange(generalized_score)
 
   # Go through each EUEI bin in order
