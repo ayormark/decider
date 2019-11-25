@@ -27,15 +27,6 @@ asana_move_to_section <- function (
   project,
   ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN")) {
 
-  # task_to_move <- "1148844364427354"
-  #
-  # section <- "1150999038969028"
-  #
-  # project <- "1148823248153567"
-  #
-  # ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
-
-
   endpoint1 <- "https://app.asana.com/api/1.0/sections/"
   endpoint2 <- "/addTask"
 
