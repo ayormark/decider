@@ -387,9 +387,14 @@ decider <- function(input_type = "asana",
     as_tibble()
 
   # Remove uneccesary list format
-  tier_gids <- tier_gids$data
+  tier_gids <- tier_gids$data %>%
+    rename(section = name) %>%
+    arrange(section) %>% filter()
 
-  colnames(tier_gids) <- c("gid", "Tier", "resource_type")
+  # Get gids of the Tier # sections only
+  tier_gids %>%
+    filter(str_detect(section, "Tier")) %>%
+    select(-resource_type)
 
   for (i in 1:nrow(todo)) {
 

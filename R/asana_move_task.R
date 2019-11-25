@@ -4,7 +4,7 @@
 
 ######### Documentation #######################################################
 
-#' Move A Task Within A Project
+#' Move A Task Within A Project Relative To Other Tasks
 #' @param task_to_move The gid of the task that you want to move
 #' @param insert_before The gid of the task that you would like to use as reference for
 #' task placement. Defaults to top of list
