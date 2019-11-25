@@ -5,6 +5,7 @@
 \title{Get A Tibble Of All Sections Within A Project And Their gids}
 \usage{
 asana_section_gids(project, section_str = NA,
+  include_no_section = FALSE,
   ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"))
 }
 \arguments{
