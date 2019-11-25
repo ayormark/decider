@@ -25,11 +25,11 @@ asana_section_gids <- function (project,
                                 ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN")) {
 
   # Test Project:
-  project <- "1148823248153567"
-  section_str <- "Tier"
-  ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
-  task_to_move <- "1148844364427354" # "useless thing" task
-  section <- "1151006716370421" # Tier 3 in Test Project
+  # project <- "1148823248153567"
+  # section_str <- "Tier"
+  # ASANA_ACCESS_TOKEN <- Sys.getenv("ASANA_ACCESS_TOKEN")
+  # task_to_move <- "1148844364427354" # "useless thing" task
+  # section <- "1151006716370421" # Tier 3 in Test Project
 
 
   # Get gid for each section within the project
@@ -56,14 +56,14 @@ asana_section_gids <- function (project,
   no_section_gid <- section_gids %>%
     filter(str_detect(section, "(no section)"))
 
-  # Get gids of the sections that contain the text string only
+  # Get gids of only the sections that contain the text string
   if (!is.na(section_str)) {
     section_gids <- section_gids %>%
       filter(str_detect(section, section_str))
   }
 
   if (include_no_section) {
-    section_gids <- bind_rows(no_section_gid, section_gids)
+    section_gids <- bind_rows(no_section_gid, section_gids) %>% unique()
   }
 
   # Get rid of unneeded resource_type column
