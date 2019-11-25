@@ -15,7 +15,7 @@ task placement. Defaults to top of list}
 
 \item{project}{The project gid}
 
-\item{section}{An Asana access token.
+\item{ASANA_ACCESS_TOKEN}{An Asana access token.
 You can get your own personal Asana access token here:
 https://asana.com/guide/help/api/api#gl-access-tokens}
 }

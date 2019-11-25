@@ -9,7 +9,7 @@
 #' @param insert_before The gid of the task that you would like to use as reference for
 #' task placement. Defaults to top of list
 #' @param project The project gid
-#' @param section An Asana access token.
+#' @param ASANA_ACCESS_TOKEN An Asana access token.
 #' You can get your own personal Asana access token here:
 #' https://asana.com/guide/help/api/api#gl-access-tokens
 #' @export
