@@ -92,7 +92,8 @@ decider <- function(input_type = "asana",
                     run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = "Task",
-                    testing_task_num = NA) {
+                    testing_task_num = NA,
+                    do_now = FALSE) {
 
   if (asana_project_gid == "mytasks") {
     asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
@@ -104,14 +105,6 @@ decider <- function(input_type = "asana",
   # testing_task_num = NA
 
   # setwd("~/Google Drive/Personal/R/decider")
-
-  # Choose whether to import csv or connect with Asana API
-  # input_type <- "asana"
-  # input_type <- "csv"
-  if (input_type == "csv") {
-    csv_folder <- "/Users/adamyormark/Downloads/"
-    csv_filename_base <- "asana2go_output_csv_basic"
-  }
 
   # If testing, select how many tasks to rank
   # rm(testing_task_num)
@@ -300,7 +293,7 @@ decider <- function(input_type = "asana",
     as.character(Importance) == 1 ~ "Not Very Important",
     TRUE ~ as.character(Importance)))
 
-  ######### EUEI Bin Do-Order #################################################
+  ######### Bin Performance Order #############################################
 
   # The order of task sections to move through and actions to be taken
 
@@ -341,6 +334,7 @@ decider <- function(input_type = "asana",
   #   "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
   #   "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
 
+  # Function to mathematically determine performance order
   source(paste0(getwd(), "/R/bin_performance_order.R"))
 
   bin_performance_order <- bin_performance_order(urgency_bias = 1.4) %>%
@@ -353,7 +347,22 @@ decider <- function(input_type = "asana",
 
   todo <- todo %>% arrange(by = generalized_score)
 
+  ######### Build Tier Sections in Asana ######################################
+  # Create Tiered sections
+  num_tiers <- 5 # Arbitrary number
+  bins_per_tier <- (nrow(bin_performance_order) / num_tiers) %>% round
+
+  tier_names <- c()
+  for (i in 1:num_tiers) {
+    tier_names <- c(tier_names, paste0("Tier ", i))
+  }
+
+  # Build Sections Tier 1, Tier 2, etc. in Asana
+  build_sections(tier_names, project_gid = asana_project_gid)
+
   ######### Reorder in Asana - Rough ##########################################
+
+
 
   # (Future Plan)
 
@@ -362,7 +371,7 @@ decider <- function(input_type = "asana",
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
 
-  # Get a tibble of the unique details of each bin that contains tasks
+  # Get a tibble of the unique details of all bins that contains tasks
   euei_bins <- todo %>%
     select(generalized_score, EUEI, Urgency_str, Importance_str) %>%
     unique() %>% arrange(generalized_score)
@@ -389,9 +398,9 @@ decider <- function(input_type = "asana",
 
       # Perform quicksort for all tasks in this bin
       bin <- bin %>%
-        mutate(bin_order = quickSort(bin$Task, compare)) %>%
+        mutate(bin_subscore = quickSort(bin$Task, compare)) %>%
         # rearrange order by quickSort results
-        arrange(by = bin_order)
+        arrange(by = bin_subscore)
 
       if (nrow(bin) > 1) {
         # Only state that ordering is completed if more than 1 task in process
