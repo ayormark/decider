@@ -76,6 +76,7 @@
 #### Packages ####
 
 #' @import tidyverse
+#' @import testthat
 #' @import rje
 #' @import stringr
 #' @import jsonlite
@@ -98,7 +99,7 @@ decider <- function(input_type = "asana",
 
   # input_type = "asana"
   # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
-  # asana_project_gid = "mytasks"
+  # # asana_project_gid = "mytasks"
   # run_shiny = FALSE
   # testing_task_num = 5
 
@@ -299,43 +300,6 @@ decider <- function(input_type = "asana",
 
   # The order of task sections to move through and actions to be taken
 
-  # Determined by the chart below and a traveling set of diagonal lines
-  # https://docs.google.com/drawings/d/1XWlp9sYhuP-iULGH5so0Q9qumT0z1by
-  # hWzqo9fzRe7g/preview
-
-  # do_order <- list(
-  #   "EUEI" = list("EUEI", "Delegate if Possible"),
-  #   "EUVI" = list("EUVI", "Delegate if Possible"),
-  #   "VUEI" = list("VUEI", "Delegate if Possible"),
-  #   "EUMI" = list("EUMI", "Delegate if Possible"),
-  #   "VUVI" = list("VUVI", "Delegate if Possible"),
-  #   "EUSI" = list("EUSI", "Delegate if Possible"),
-  #   "MUEI" = list("MUEI", "Delegate if Possible"),
-  #   "VUMI" = list("VUMI", "Delegate if Possible"),
-  #   # "SUEI" = list("SUEI", "Schedule"),
-  #   "EUNI" = list("EUNI", "Delegate if Possible"),
-  #   "MUVI" = list("MUVI", "Delegate if Possible"),
-  #   "VUSI" = list("VUSI", "Delegate if Possible"),
-  #   # "SUVI" = list("SUVI", "Schedule"),
-  #   "SUEI" = list("SUEI", "Delegate if Possible"), # again, after scheduling
-  #   "MUMI" = list("MUMI", "Delegate if Possible"),
-  #   # "NUEI" = list("NUEI", "Schedule"),
-  #   "VUNI" = list("VUNI", "Delegate if Possible"),
-  #   # "SUMI" = list("SUMI", "Schedule"),
-  #   "SUVI" = list("SUVI", "Delegate if Possible"), # again, after scheduling
-  #   "MUSI" = list("MUSI", "Delegate if Possible"),
-  #   # "NUVI" = list("NUVI", "Schedule"),
-  #   "NEUI" = list("NUEI", "Delegate if Possible"), # again, after scheduling
-  #   "SUMI" = list("SUMI", "Delegate if Possible"), # again, after scheduling
-  #   "MUNI" = list("MUNI", "Delegate if Possible"),
-  #   # "NUMI" = list("NUMI", "Schedule"),
-  #   "NUVI" = list("NUVI", "Delegate if Possible"), # again, after scheduling
-  #   "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
-  #   "NUMI" = list("NUMI", "Delegate if Possible"), # again, after scheduling
-  #   "SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
-  #   "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
-  #   "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
-
   # Function to mathematically determine performance order
   source(paste0(getwd(), "/R/bin_performance_order.R"))
 
@@ -371,26 +335,37 @@ decider <- function(input_type = "asana",
 
   ######### Place in Tiers ####################################################
 
-  source(paste0(getwd(), "/R/asana_section_gids.R"))
+  #### CONTINUE HERE ########################
+  ## You were working on getting task placement into sections to work
+  # for mytasks. It works for other projects. You were getting an Internal
+  # Server Error
+  #### CONTINUE HERE ########################
 
-  # Get the gids of each section within the project, excluding "(no section)"
-  tier_gids <- asana_section_gids(asana_project_gid, section_str = "Tier")
+# "932414416064709" is the mytasks gid
+  if (asana_project_gid != "932414416064709") { #REMOVE LATER
 
-  # Move each task to the correct section
-  for (i in 1:nrow(todo)) {
+    source(paste0(getwd(), "/R/asana_section_gids.R"))
 
-    task_to_move <- todo[i, ] %>% .$gid
-    destined_tier <- todo[i, ] %>% .$Tier
-    destined_tier <- paste0("Tier ", destined_tier)
+    # Get the gids of each section within the project, excluding "(no section)"
+    tier_gids <- asana_section_gids(asana_project_gid, section_str = "Tier")
 
-    destined_tier_gid <- tier_gids %>%
-      filter(section == destined_tier) %>% .$gid
+    # Move each task to the correct section
+    for (i in 1:nrow(todo)) {
 
-    asana_move_to_section(task_to_move,
-                          section = destined_tier_gid,
-                          project = asana_project_gid)
+      task_to_move <- todo[i, ] %>% .$gid
+      destined_tier <- todo[i, ] %>% .$Tier %>% paste0("Tier ", .)
+
+      destined_tier_gid <- tier_gids %>%
+        filter(section == destined_tier) %>% .$gid
+
+      asana_move_to_section(task_to_move,
+                            section = destined_tier_gid,
+                            project = asana_project_gid)
+
+    }
 
   }
+
 
   ######### QuickSort and Do Tasks ############################################
 

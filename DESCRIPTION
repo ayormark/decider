@@ -29,3 +29,5 @@ Imports:
     lubridate
 Remotes:
     datacamp/asana
+Suggests: 
+    testthat (>= 2.1.0)
