@@ -370,32 +370,9 @@ decider <- function(input_type = "asana",
 
   ######### Place in Tiers ####################################################
 
-  # Get gid for each section within the project
-  tiers_gid_endpoint <- paste0("https://app.asana.com/api/1.0/projects/",
-             asana_project_gid,
-             "/sections")
+  source(paste0(getwd(), "/R/asana_section_gids.R"))
 
-  ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN")
-  Authorization <- paste0("Bearer ", ASANA_ACCESS_TOKEN)
-
-  tier_gids <- GET(
-    tiers_gid_endpoint,
-    body = list(project = asana_project_gid),
-    add_headers(Authorization = Authorization)
-  ) %>%
-    content("text") %>%
-    fromJSON() %>%
-    as_tibble()
-
-  # Remove uneccesary list format
-  tier_gids <- tier_gids$data %>%
-    rename(section = name) %>%
-    arrange(section) %>% filter()
-
-  # Get gids of the Tier # sections only
-  tier_gids %>%
-    filter(str_detect(section, "Tier")) %>%
-    select(-resource_type)
+  asana_section_gids(asana_project_gid, section_str = "Tier")
 
   for (i in 1:nrow(todo)) {
 
