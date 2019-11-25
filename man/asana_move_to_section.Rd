@@ -2,7 +2,7 @@
 % Please edit documentation in R/asana_move_to_section.R
 \name{asana_move_to_section}
 \alias{asana_move_to_section}
-\title{Move A Task Within A Project Relative To Other Tasks}
+\title{Move A Task To a Specific Section Within A Project}
 \usage{
 asana_move_to_section(task_to_move, section = NULL, project,
   ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN"))
@@ -19,7 +19,7 @@ You can get your own personal Asana access token here:
 https://asana.com/guide/help/api/api#gl-access-tokens}
 }
 \description{
-Move A Task Within A Project Relative To Other Tasks
+Move A Task To a Specific Section Within A Project
 }
 \details{
 Follow the instructions for the asana package to make usage easier

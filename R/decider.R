@@ -372,14 +372,22 @@ decider <- function(input_type = "asana",
 
   source(paste0(getwd(), "/R/asana_section_gids.R"))
 
-  asana_section_gids(asana_project_gid, section_str = "Tier")
+  # Get the gids of each section within the project, excluding "(no section)"
+  tier_gids <- asana_section_gids(asana_project_gid, section_str = "Tier")
 
+  # Move each task to the correct section
   for (i in 1:nrow(todo)) {
 
-    asana_move_to_section(task_to_move,
-                          section = NULL,
-                          project = asana_project_gid)
+    task_to_move <- todo[i, ] %>% .$gid
+    destined_tier <- todo[i, ] %>% .$Tier
+    destined_tier <- paste0("Tier ", destined_tier)
 
+    destined_tier_gid <- tier_gids %>%
+      filter(section == destined_tier) %>% .$gid
+
+    asana_move_to_section(task_to_move,
+                          section = destined_tier_gid,
+                          project = asana_project_gid)
 
   }
 
