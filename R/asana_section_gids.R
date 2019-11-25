@@ -63,7 +63,9 @@ asana_section_gids <- function (project,
   }
 
   if (include_no_section) {
-    section_gids <- bind_rows(no_section_gid, section_gids) %>% unique()
+    section_gids <- bind_rows(section_gids, no_section_gid) %>% unique()
+  } else if (!include_no_section) {
+    section_gids <- section_gids %>% filter(section != "(no section)")
   }
 
   # Get rid of unneeded resource_type column
