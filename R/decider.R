@@ -184,7 +184,7 @@ decider <- function(input_type = "asana",
     cat(red("Note: testing with", testing_task_num, "Tasks\n"))
   }
 
-  wait_for_key("c")
+  #wait_for_key("c")
 
   ######### Rate Each Task ######################################################
 
@@ -253,7 +253,7 @@ decider <- function(input_type = "asana",
   cat(green("You have completed ranking Urgency and Importance \n\n"),
       sep = "")
 
-  wait_for_key("c")
+  #wait_for_key("c")
 
   ######### EUEI Abbreviations ################################################
 
@@ -340,6 +340,16 @@ decider <- function(input_type = "asana",
   bin_performance_order <- bin_performance_order(urgency_bias = 1.4) %>%
     rename(Urgency = u, Importance = i)
 
+  # We have chosen to have 5 Tiers of tasks
+  num_tiers <- 5 # Arbitrary number
+
+  # Determine the number of bins per tier
+  bins_per_tier <- nrow(bin_performance_order) / num_tiers %>% ceiling
+
+  # Add Tier level to each bin
+  bin_performance_order <- bin_performance_order %>%
+    mutate(Tier = (generalized_score / bins_per_tier) %>% ceiling)
+
   num_possible_bins <- nrow(bin_performance_order)
 
   todo <- todo %>%
@@ -348,8 +358,6 @@ decider <- function(input_type = "asana",
   todo <- todo %>% arrange(by = generalized_score)
 
   ######### Build Tier Sections in Asana ######################################
-  # Create Tiered sections
-  num_tiers <- 5 # Arbitrary number
 
   tier_names <- c()
   for (i in 1:num_tiers) {
@@ -359,14 +367,37 @@ decider <- function(input_type = "asana",
   # Build Sections Tier 1, Tier 2, etc. in Asana
   build_sections(tier_names, project_gid = asana_project_gid)
 
-  ######### Reorder in Asana - Rough ##########################################
+  ######### Place in Tiers ####################################################
 
-  bins_per_tier <- nrow(bin_performance_order) / num_tiers %>% ceiling
+  # Get gid for each section within the project
+  tiers_gid_endpoint <- paste0("https://app.asana.com/api/1.0/projects/",
+             asana_project_gid,
+             "/sections")
 
-  bin_performance_order %>%
-    mutate(Tier = (generalized_score / bins_per_tier) %>% ceiling)
+  ASANA_ACCESS_TOKEN = Sys.getenv("ASANA_ACCESS_TOKEN")
+  Authorization <- paste0("Bearer ", ASANA_ACCESS_TOKEN)
 
-  # (Future Plan)
+  tier_gids <- GET(
+    tiers_gid_endpoint,
+    body = list(project = asana_project_gid),
+    add_headers(Authorization = Authorization)
+  ) %>%
+    content("text") %>%
+    fromJSON() %>%
+    as_tibble()
+
+  # Remove uneccesary list format
+  tier_gids <- tier_gids$data
+
+  colnames(tier_gids) <- c("gid", "Tier", "resource_type")
+
+  for (i in 1:nrow(todo)) {
+
+    asana_move_task(task_to_move = todo[i, ] %>% .gid,
+                    project = asana_project_gid,
+                    section)
+
+  }
 
   ######### QuickSort and Do Tasks ############################################
 
@@ -415,7 +446,7 @@ decider <- function(input_type = "asana",
                   " tasks!",
                   "\n\n", sep = ""))
 
-        wait_for_key("c")
+        #wait_for_key("c")
       }
 
 
