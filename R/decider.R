@@ -398,9 +398,7 @@ decider <- function(input_type = "asana",
 
   for (i in 1:nrow(todo)) {
 
-    asana_move_task(task_to_move = todo[i, ] %>% .gid,
-                    project = asana_project_gid,
-                    section)
+    asana_move_to_section()
 
   }
 
