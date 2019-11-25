@@ -96,14 +96,15 @@ decider <- function(input_type = "asana",
                     testing_task_num = NA,
                     do_now = FALSE) {
 
+  # input_type = "asana"
+  # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  # asana_project_gid = "mytasks"
+  # run_shiny = FALSE
+  # testing_task_num = 5
+
   if (asana_project_gid == "mytasks") {
     asana_project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
   }
-
-  input_type = "asana"
-  asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
-  run_shiny = FALSE
-  testing_task_num = NA
 
   # setwd("~/Google Drive/Personal/R/decider")
 

@@ -29,8 +29,12 @@ build_sections <-
 
     # Get list of sections that currently exist in the project
     current_sections <-
-      asn_sections_find_by_project(project = project_gid) %>%
-      filter(name != "(no section)")
+      asn_sections_find_by_project(project = project_gid)
+
+    if (class(current_sections) != "asana_api") {
+      current_sections <- current_sections %>%
+        filter(name != "(no section)")
+    }
 
     # Convert input sections into a tibble for easier manipulation
     sections <- sections %>% enframe(name = NULL) %>% rename(name = value)
