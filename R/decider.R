@@ -51,8 +51,10 @@
 #' https://www.youtube.com/watch?v=WaNLJf8xzC4
 #' @param input_type The method to import tasks into decider.
 #' Can be "asana" or "csv"
-#' @param asana_project_gid The global identifier for an asana project.
-#' Can usually be found in the project URL.
+#' @param project_gid The global identifier for an asana project.
+#' Can usually be found in the project URL. Defaults to "ASANA_PROJECT_ID"
+#' in .renviron. If set to "mytasks" will be set to
+#' "ASANA_MYTASKS_PROJECT_ID" in .renviron
 #' @param run_shiny Choose whether to run the GUI for decider
 #' @param csv_path The filepath to a csv with a list of tasks
 #' @param csv_task_column_name The name of the column containing the task list
@@ -65,8 +67,8 @@
 #' @examples
 #' decider(
 #' input_type = "asana",
-#' asana_project_gid = "123456789101112,
-#' asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
+#' project_gid = "123456789101112,
+#' project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #' csv_task_column_name = "Task",
 #' testing_task_num = 4)
 
@@ -74,8 +76,10 @@
 #### Packages ####
 
 #' @import tidyverse
+#' @import testthat
 #' @import rje
 #' @import stringr
+#' @import jsonlite
 #' @import shiny
 #' @import crayon
 #' @import httr
@@ -86,30 +90,28 @@
 ########## Decider Function ###################################################
 
 decider <- function(input_type = "asana",
-                    asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
+                    project_gid = Sys.getenv("ASANA_PROJECT_ID"),
                     run_shiny = FALSE,
                     csv_path,
                     csv_task_column_name = "Task",
-                    testing_task_num = NA) {
+                    testing_task_num = NA,
+                    do_now = FALSE) {
 
   input_type = "asana"
-  asana_project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  # project_gid = Sys.getenv("ASANA_PROJECT_ID")
+  project_gid = "mytasks"
   run_shiny = FALSE
-  testing_task_num = NA
+  # testing_task_num = 5
 
-  # setwd("~/Google Drive/Personal/R/decider")
+  if (project_gid == "mytasks") {
+    project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
+    mytasks <- TRUE
+  } else {mytasks <- FALSE}
 
-  # Choose whether to import csv or connect with Asana API
-  # input_type <- "asana"
-  # input_type <- "csv"
-  if (input_type == "csv") {
-    csv_folder <- "/Users/adamyormark/Downloads/"
-    csv_filename_base <- "asana2go_output_csv_basic"
+  if (project_gid == "test") {
+    project_gid = Sys.getenv("ASANA_PROJECT_ID")
+    testing <- TRUE
   }
-
-  # If testing, select how many tasks to rank
-  # rm(testing_task_num)
-  # testing_task_num <- 4
 
   ######### CSV Import ##########################################################
 
@@ -129,7 +131,7 @@ decider <- function(input_type = "asana",
 
     source(paste0(getwd(), "/R/asana_import.R"))
 
-    data <- asana_import(project_gid = asana_project_gid, shuffle = TRUE)
+    data <- asana_import(project_gid = project_gid, shuffle = TRUE)
 
     todo <- data[[1]]
     prerated_todo <- data[[2]]
@@ -185,7 +187,7 @@ decider <- function(input_type = "asana",
     cat(red("Note: testing with", testing_task_num, "Tasks\n"))
   }
 
-  wait_for_key("c")
+  #wait_for_key("c")
 
   ######### Rate Each Task ######################################################
 
@@ -254,7 +256,7 @@ decider <- function(input_type = "asana",
   cat(green("You have completed ranking Urgency and Importance \n\n"),
       sep = "")
 
-  wait_for_key("c")
+  #wait_for_key("c")
 
   ######### EUEI Abbreviations ################################################
 
@@ -294,51 +296,25 @@ decider <- function(input_type = "asana",
     as.character(Importance) == 1 ~ "Not Very Important",
     TRUE ~ as.character(Importance)))
 
-  ######### EUEI Bin Do-Order #################################################
+  ######### Bin Performance Order #############################################
 
   # The order of task sections to move through and actions to be taken
 
-  # Determined by the chart below and a traveling set of diagonal lines
-  # https://docs.google.com/drawings/d/1XWlp9sYhuP-iULGH5so0Q9qumT0z1by
-  # hWzqo9fzRe7g/preview
-
-  # do_order <- list(
-  #   "EUEI" = list("EUEI", "Delegate if Possible"),
-  #   "EUVI" = list("EUVI", "Delegate if Possible"),
-  #   "VUEI" = list("VUEI", "Delegate if Possible"),
-  #   "EUMI" = list("EUMI", "Delegate if Possible"),
-  #   "VUVI" = list("VUVI", "Delegate if Possible"),
-  #   "EUSI" = list("EUSI", "Delegate if Possible"),
-  #   "MUEI" = list("MUEI", "Delegate if Possible"),
-  #   "VUMI" = list("VUMI", "Delegate if Possible"),
-  #   # "SUEI" = list("SUEI", "Schedule"),
-  #   "EUNI" = list("EUNI", "Delegate if Possible"),
-  #   "MUVI" = list("MUVI", "Delegate if Possible"),
-  #   "VUSI" = list("VUSI", "Delegate if Possible"),
-  #   # "SUVI" = list("SUVI", "Schedule"),
-  #   "SUEI" = list("SUEI", "Delegate if Possible"), # again, after scheduling
-  #   "MUMI" = list("MUMI", "Delegate if Possible"),
-  #   # "NUEI" = list("NUEI", "Schedule"),
-  #   "VUNI" = list("VUNI", "Delegate if Possible"),
-  #   # "SUMI" = list("SUMI", "Schedule"),
-  #   "SUVI" = list("SUVI", "Delegate if Possible"), # again, after scheduling
-  #   "MUSI" = list("MUSI", "Delegate if Possible"),
-  #   # "NUVI" = list("NUVI", "Schedule"),
-  #   "NEUI" = list("NUEI", "Delegate if Possible"), # again, after scheduling
-  #   "SUMI" = list("SUMI", "Delegate if Possible"), # again, after scheduling
-  #   "MUNI" = list("MUNI", "Delegate if Possible"),
-  #   # "NUMI" = list("NUMI", "Schedule"),
-  #   "NUVI" = list("NUVI", "Delegate if Possible"), # again, after scheduling
-  #   "SUSI" = list("SUSI", "Delegate, Schedule, or Delete"),
-  #   "NUMI" = list("NUMI", "Delegate if Possible"), # again, after scheduling
-  #   "SUNI" = list("SUNI", "Delegate, Schedule, or Delete"),
-  #   "NUSI" = list("NUSI", "Delegate, Schedule, or Delete"),
-  #   "NUNI" = list("NUNI", "Delegate, Schedule, or Delete"))
-
+  # Function to mathematically determine performance order
   source(paste0(getwd(), "/R/bin_performance_order.R"))
 
   bin_performance_order <- bin_performance_order(urgency_bias = 1.4) %>%
     rename(Urgency = u, Importance = i)
+
+  # We have chosen to have 5 Tiers of tasks
+  num_tiers <- 5 # Arbitrary number
+
+  # Determine the number of bins per tier
+  bins_per_tier <- nrow(bin_performance_order) / num_tiers %>% ceiling
+
+  # Add Tier level to each bin
+  bin_performance_order <- bin_performance_order %>%
+    mutate(Tier = (generalized_score / bins_per_tier) %>% ceiling)
 
   num_possible_bins <- nrow(bin_performance_order)
 
@@ -347,18 +323,70 @@ decider <- function(input_type = "asana",
 
   todo <- todo %>% arrange(by = generalized_score)
 
-  ######### Reorder in Asana - Rough ##########################################
+  ######### Build Tier Sections in Asana ######################################
 
-  # (Future Plan)
+  tier_names <- c()
+  for (i in 1:num_tiers) {
+    tier_names <- c(tier_names, paste0("Tier ", i))
+  }
 
-  ######### QuickSort and Do Tasks ############################################
+  if (!mytasks) {
+    # Build Sections Tier 1, Tier 2, etc. in Asana
+    build_sections(tier_names, project_gid = project_gid)}
+
+  ######### Place in Tiers ####################################################
+
+  if (!mytasks) {
+
+    source(paste0(getwd(), "/R/asana_section_gids.R"))
+
+    # Get the gids of each section within the project, excluding "(no section)"
+    tier_gids <- asana_section_gids(project_gid, section_str = "Tier")
+
+    # Move each task to the correct section
+    for (i in 1:nrow(todo)) {
+
+      task_to_move <- todo[i, ] %>% .$gid
+      destined_tier <- todo[i, ] %>% .$Tier %>% paste0("Tier ", .)
+
+      destined_tier_gid <- tier_gids %>%
+        filter(section == destined_tier) %>% .$gid
+
+      asana_move_to_section(task_to_move,
+                            section = destined_tier_gid,
+                            project = project_gid)
+
+    }
+
+  } else if (mytasks) { # My Tasks functions differently than other projects
+
+    # Place in rough order within correct Tiers
+    todo <- todo %>% arrange(-Urgency*Importance) %>% arrange(Tier)
+
+    # The least pressing task, to use as an anchor for placement
+    prev_task <- todo[nrow(todo), ] %>% .$gid
+    for (i in (nrow(todo)-1):1) { # Note that tasks are placed last-to-first
+
+      task_to_move <- todo[i, ] %>% .$gid
+      # Move a task before another task
+      asn_tasks_add_project(task_to_move,
+                            insert_before = prev_task,
+                            project = project_gid)
+
+      prev_task <- task_to_move
+
+    }
+  }
+
+
+  ######### QuickSort (and Do Tasks) ##########################################
 
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
 
-  # Get a tibble of the unique details of each bin that contains tasks
+  # Get a tibble of the unique details of all current bins that contain tasks
   euei_bins <- todo %>%
-    select(generalized_score, EUEI, Urgency_str, Importance_str) %>%
+    select(EUEI, Urgency_str, Importance_str, generalized_score) %>%
     unique() %>% arrange(generalized_score)
 
   # Go through each EUEI bin in order
@@ -383,9 +411,25 @@ decider <- function(input_type = "asana",
 
       # Perform quicksort for all tasks in this bin
       bin <- bin %>%
-        mutate(bin_order = quickSort(bin$Task, compare)) %>%
+        mutate(bin_subscore = quickSort(bin$Task, compare)) %>%
         # rearrange order by quickSort results
-        arrange(by = bin_order)
+        arrange(by = bin_subscore)
+
+      # Reorder tasks in Asana
+      # The least pressing task in the bin, to use as an anchor for placement
+      prev_task <- bin[nrow(bin), ] %>% .$gid
+      for (i in (nrow(bin)-1):1) {
+
+        task_to_move <- bin[i, ] %>% .$gid
+        # Move a task before another task
+        asn_tasks_add_project(task_to_move,
+                              insert_before = prev_task,
+                              project = project_gid)
+
+        prev_task <- task_to_move
+
+      }
+
 
       if (nrow(bin) > 1) {
         # Only state that ordering is completed if more than 1 task in process
@@ -398,30 +442,32 @@ decider <- function(input_type = "asana",
                   " tasks!",
                   "\n\n", sep = ""))
 
-        wait_for_key("c")
+        #wait_for_key("c")
       }
 
+      ######### Do Tasks ######################################################
 
-      # Prompt user to Do/Delegate/etc. the task
-      for (task in bin$Task) {
+      if (do_now == TRUE) {
+        # Prompt user to Do/Delegate/etc. the task
+        for (task in bin$Task) {
 
-        # Display suggested action based on EUEI, e.g. "Delegate if Possible"
-        # if (do_order[[i]][[2]] == "Schedule") {
-        #   cat(red("Do not do yet, just schedule:\n"))
-        # } else {
-        #   cat(green(do_order[[abbrev]][[2]]), "\n")
-        # }
+          # Display suggested action based on EUEI, e.g. "Delegate if Possible"
+          # if (do_order[[i]][[2]] == "Schedule") {
+          #   cat(red("Do not do yet, just schedule:\n"))
+          # } else {
+          #   cat(green(do_order[[abbrev]][[2]]), "\n")
+          # }
 
 
-        # Display menu to choose what kind of action has been taken
-        action <- menu(action_completed, title = task)
+          # Display menu to choose what kind of action has been taken
+          action <- menu(action_completed, title = task)
 
-        # todo <-
-        a <- todo %>% filter(Task == task) %>%
-          mutate(Last_Action = action, Date_last_action = now())
+          # todo <-
+          a <- todo %>% filter(Task == task) %>%
+            mutate(Last_Action = action, Date_last_action = now())
 
+        }
       }
-
     }
   }
 
@@ -441,8 +487,8 @@ decider <- function(input_type = "asana",
 #
 # decider(input_type = "asana",
 #         # An Asana project to test with "Test Project" gid: 1148823248153567
-#         asana_project_gid = "1148823248153567",
-#         # asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
+#         project_gid = "1148823248153567",
+#         # project_gid = Sys.getenv("ASANA_PROJECT_ID"),
 #         # run_shiny = FALSE,
 #         # csv_path,
 #         # csv_task_column_name = "Task",

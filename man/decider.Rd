@@ -7,14 +7,16 @@
 decider(input_type = "asana",
   asana_project_gid = Sys.getenv("ASANA_PROJECT_ID"),
   run_shiny = FALSE, csv_path, csv_task_column_name = "Task",
-  testing_task_num = NA)
+  testing_task_num = NA, do_now = FALSE)
 }
 \arguments{
 \item{input_type}{The method to import tasks into decider.
 Can be "asana" or "csv"}
 
 \item{asana_project_gid}{The global identifier for an asana project.
-Can usually be found in the project URL.}
+Can usually be found in the project URL. Defaults to "ASANA_PROJECT_ID"
+in .renviron. If set to "mytasks" will be set to
+"ASANA_MYTASKS_PROJECT_ID" in .renviron}
 
 \item{run_shiny}{Choose whether to run the GUI for decider}
 
