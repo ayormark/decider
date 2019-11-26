@@ -379,7 +379,7 @@ decider <- function(input_type = "asana",
   }
 
 
-  ######### QuickSort and Do Tasks ############################################
+  ######### QuickSort (and Do Tasks) ##########################################
 
   # Create list of actions that can be selected after moving past each task
   action_completed <- list("Done", "Delegated", "Scheduled", "Can't Do Now")
@@ -429,27 +429,29 @@ decider <- function(input_type = "asana",
         #wait_for_key("c")
       }
 
+      ######### Do Tasks ######################################################
 
-      # Prompt user to Do/Delegate/etc. the task
-      for (task in bin$Task) {
+      if (do_now == TRUE) {
+        # Prompt user to Do/Delegate/etc. the task
+        for (task in bin$Task) {
 
-        # Display suggested action based on EUEI, e.g. "Delegate if Possible"
-        # if (do_order[[i]][[2]] == "Schedule") {
-        #   cat(red("Do not do yet, just schedule:\n"))
-        # } else {
-        #   cat(green(do_order[[abbrev]][[2]]), "\n")
-        # }
+          # Display suggested action based on EUEI, e.g. "Delegate if Possible"
+          # if (do_order[[i]][[2]] == "Schedule") {
+          #   cat(red("Do not do yet, just schedule:\n"))
+          # } else {
+          #   cat(green(do_order[[abbrev]][[2]]), "\n")
+          # }
 
 
-        # Display menu to choose what kind of action has been taken
-        action <- menu(action_completed, title = task)
+          # Display menu to choose what kind of action has been taken
+          action <- menu(action_completed, title = task)
 
-        # todo <-
-        a <- todo %>% filter(Task == task) %>%
-          mutate(Last_Action = action, Date_last_action = now())
+          # todo <-
+          a <- todo %>% filter(Task == task) %>%
+            mutate(Last_Action = action, Date_last_action = now())
 
+        }
       }
-
     }
   }
 
