@@ -97,19 +97,20 @@ decider <- function(input_type = "asana",
                     testing_task_num = NA,
                     do_now = FALSE) {
 
-  # input_type = "asana"
+  input_type = "asana"
   # project_gid = Sys.getenv("ASANA_PROJECT_ID")
-  # project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
-  # # project_gid = "mytasks"
-  # run_shiny = FALSE
+  project_gid = "mytasks"
+  run_shiny = FALSE
   # testing_task_num = 5
 
   if (project_gid == "mytasks") {
     project_gid = Sys.getenv("ASANA_MYTASKS_PROJECT_ID")
-  }
+    mytasks <- TRUE
+  } else {mytasks <- FALSE}
 
   if (project_gid == "test") {
     project_gid = Sys.getenv("ASANA_PROJECT_ID")
+    testing <- TRUE
   }
 
   ######### CSV Import ##########################################################
@@ -329,13 +330,13 @@ decider <- function(input_type = "asana",
     tier_names <- c(tier_names, paste0("Tier ", i))
   }
 
-  # Build Sections Tier 1, Tier 2, etc. in Asana
-  build_sections(tier_names, project_gid = project_gid)
+  if (!mytasks) {
+    # Build Sections Tier 1, Tier 2, etc. in Asana
+    build_sections(tier_names, project_gid = project_gid)}
 
   ######### Place in Tiers ####################################################
 
-# "932414416064709" is the mytasks gid
-  if (project_gid != "932414416064709") { #REMOVE LATER
+  if (!mytasks) {
 
     source(paste0(getwd(), "/R/asana_section_gids.R"))
 
@@ -357,6 +358,24 @@ decider <- function(input_type = "asana",
 
     }
 
+  } else if (mytasks) { # My Tasks functions differently than other projects
+
+    # Place in rough order within correct Tiers
+    todo <- todo %>% arrange(-Urgency*Importance) %>% arrange(Tier)
+
+    # The least pressing task, to use as an anchor for placement
+    prev_task <- todo[nrow(todo), ] %>% .$gid
+    for (i in (nrow(todo)-1):1) { # Note that tasks are placed last-to-first
+
+      task_to_move <- todo[i, ] %>% .$gid
+      # Move a task before another task
+      asn_tasks_add_project(task_to_move,
+                            insert_before = prev_task,
+                            project = project_gid)
+
+      prev_task <- task_to_move
+
+    }
   }
 
 
