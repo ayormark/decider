@@ -415,6 +415,22 @@ decider <- function(input_type = "asana",
         # rearrange order by quickSort results
         arrange(by = bin_subscore)
 
+      # Reorder tasks in Asana
+      # The least pressing task in the bin, to use as an anchor for placement
+      prev_task <- bin[nrow(bin), ] %>% .$gid
+      for (i in (nrow(bin)-1):1) {
+
+        task_to_move <- bin[i, ] %>% .$gid
+        # Move a task before another task
+        asn_tasks_add_project(task_to_move,
+                              insert_before = prev_task,
+                              project = project_gid)
+
+        prev_task <- task_to_move
+
+      }
+
+
       if (nrow(bin) > 1) {
         # Only state that ordering is completed if more than 1 task in process
         cat(green("You have ordered all ",
